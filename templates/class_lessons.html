@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Уроки класса {{ class_name }}{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Уроки класса {{ class_name }}</h1>
+    
+    <div class="admin-actions">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+            ← Назад к классам
+        </a>
+    </div>
+    
+    <!-- Форма создания обычного урока -->
+    <div class="create-section">
+        <h2>Создать новый урок</h2>
+        <form method="POST" action="{{ url_for('create_lesson') }}">
+            <input type="hidden" name="class_id" value="{{ class_id }}">
+            
+            <div class="form-group">
+                <label for="name">Название урока:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Выберите задания:</label>
+                <div class="tasks-checkboxes">
+                    {% for task in all_tasks %}
+                        <div class="task-checkbox">
+                            <input type="checkbox" id="task_{{ task.id }}" 
+                                   name="task_ids" value="{{ task.id }}">
+                            <label for="task_{{ task.id }}">{{ task.title }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Создать урок</button>
+        </form>
+    </div>
+    
+    <!-- Форма создания дуэли -->
+    <div class="create-section mt-4">
+        <h2>Создать математическую дуэль</h2>
+        <form method="POST" action="{{ url_for('create_duel', class_id=class_id) }}">
+            <div class="form-group">
+                <label for="duel_name">Название дуэли:</label>
+                <input type="text" id="duel_name" name="name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Создать дуэль</button>
+        </form>
+    </div>
+    
+    <!-- Список уроков и дуэлей -->
+    <div class="lessons-list mt-4">
+        <h2>Список уроков и дуэлей</h2>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Тип</th>
+                    <th>Статус</th>
+                    <th>Дата создания</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lessons %}
+                    <tr>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                <a href="{{ url_for('view_duel', duel_id=item.id) }}">{{ item.name }}</a>
+                            {% else %}
+                                {{ item.name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                <span class="badge badge-warning">Дуэль</span>
+                            {% else %}
+                                <span class="badge badge-primary">Урок</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                {% if item.status == 'active' %}
+                                    <span class="badge badge-success">Активна</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Завершена</span>
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ item.created_at }}</td>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                <a href="{{ url_for('view_duel', duel_id=item.id) }}" class="btn btn-sm btn-info">
+                                    Управление
+                                </a>
+                                <form action="{{ url_for('delete_duel', duel_id=item.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить эту дуэль?')">
+                                        Удалить
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a href="{{ url_for('edit_lesson', lesson_id=item.id) }}" class="btn btn-sm btn-primary">
+                                    Редактировать
+                                </a>
+                                <form action="{{ url_for('delete_lesson', lesson_id=item.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить этот урок?')">
+                                        Удалить
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Нет созданных уроков или дуэлей</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .create-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .badge-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .table {
+        background: white;
+    }
+</style>
+{% endblock %}

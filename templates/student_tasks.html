@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Урок {{ lesson_name }} - {{ student_name }}{% endblock %}
+
+{% block content %}
+<div class="lesson-container">
+    <div class="lesson-header">
+        <h1>{{ lesson_name }}</h1>
+        <div class="student-info">
+            <span>Ученик: <strong>{{ student_name }}</strong></span>
+            <a href="{{ url_for('student_lessons', student_id=student_id) }}" class="back-btn">
+                ← К списку уроков
+            </a>
+        </div>
+    </div>
+
+    <form method="POST" class="tasks-form">
+        {% for task in tasks %}
+        <div class="task-card">
+            <div class="task-header">
+                <div class="task-number">Задание {{ loop.index }}</div>
+                <div class="task-points">Баллы: {{ task.points|default(5) }}</div>
+            </div>
+            
+            <div class="task-content">
+                <!-- Основное содержание задания (с поддержкой HTML) -->
+                <div class="task-text">
+                    {{ task.text|safe }}
+                </div>
+                
+                <!-- Блок для ответа -->
+                <div class="answer-section">
+                    <label for="answer_{{ task.id }}">Ваш ответ:</label>
+                    {% if task.answer_type == 'text' %}
+                        <input type="text" id="answer_{{ task.id }}" name="answer_{{ task.id }}" required>
+                    {% elif task.answer_type == 'number' %}
+                        <input type="number" step="any" id="answer_{{ task.id }}" name="answer_{{ task.id }}" required>
+                    {% else %}
+                        <textarea id="answer_{{ task.id }}" name="answer_{{ task.id }}" rows="3" required></textarea>
+                    {% endif %}
+                </div>
+                
+                <!-- Блок подсказок -->
+                <div class="hint-section">
+                    <button type="button" class="hint-btn" onclick="toggleHint({{ loop.index }})">
+                        <span class="hint-icon">?</span> Нужна подсказка
+                    </button>
+                    
+                    <div id="hint-{{ loop.index }}" class="hint-content" style="display:none">
+                        {% if task.hints %}
+                            {% for hint in task.hints %}
+                                <div class="hint-item">
+                                    {{ hint.content|safe }}
+                                    {% if hint.image %}
+                                        <img src="{{ url_for('static', filename='uploads/' + hint.image) }}" 
+                                             class="hint-image" alt="Подсказка">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>Подсказок пока нет</p>
+                        {% endif %}
+                        
+                        <!-- Кнопка запроса помощи у ИИ (будет реализовано позже) -->
+                        <button type="button" class="ai-help-btn" onclick="requestAIHelp({{ task.id }})">
+                            Запросить помощь у ИИ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="form-actions">
+            <button type="submit" class="submit-btn">Отправить ответы</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Показ/скрытие подсказок
+function toggleHint(index) {
+    const hint = document.getElementById(`hint-${index}`);
+    hint.style.display = hint.style.display === 'none' ? 'block' : 'none';
+}
+
+// Запрос помощи у ИИ (заглушка для будущей реализации)
+function requestAIHelp(taskId) {
+    alert("Функция помощи от ИИ будет доступна в следующем обновлении!");
+    // Здесь будет AJAX-запрос к серверу
+}
+
+// Инициализация - скрываем все подсказки при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.hint-content').forEach(hint => {
+        hint.style.display = 'none';
+    });
+});
+</script>
+
+<style>
+/* Стили для задания */
+.lesson-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.task-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.task-number {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.task-points {
+    background: #f0f8ff;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+
+.task-text {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.task-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.answer-section {
+    margin: 20px 0;
+}
+
+.answer-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.answer-section input,
+.answer-section textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.hint-section {
+    margin-top: 20px;
+    border-top: 1px dashed #eee;
+    padding-top: 15px;
+}
+
+.hint-btn {
+    background: #e3f2fd;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #1976d2;
+    font-size: 14px;
+}
+
+.hint-btn:hover {
+    background: #bbdefb;
+}
+
+.hint-content {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.hint-item {
+    margin-bottom: 15px;
+}
+
+.hint-item img {
+    max-width: 100%;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.ai-help-btn {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.ai-help-btn:hover {
+    background: #c8e6c9;
+}
+
+.submit-btn {
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.submit-btn:hover {
+    background: #388e3c;
+}
+
+@media (max-width: 600px) {
+    .lesson-container {
+        padding: 10px;
+    }
+    
+    .task-card {
+        padding: 15px;
+    }
+}
+</style>
+{% endblock %}

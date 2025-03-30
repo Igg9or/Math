@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Математическая платформа{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            {% if session.get('is_admin') %}
+                <a href="{{ url_for('admin_dashboard') }}">Панель учителя</a>
+                <a href="{{ url_for('admin_tasks') }}">Задания</a>
+            {% elif student_id is defined %}
+                <a href="{{ url_for('student_lessons', student_id=student_id) }}">Мои уроки</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" class="logout">Выйти</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

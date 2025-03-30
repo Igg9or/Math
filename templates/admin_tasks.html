@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Управление заданиями{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Управление заданиями</h1>
+    <a href="{{ url_for('create_task') }}" class="btn btn-primary">
+        + Создать новое задание
+    </a>
+</div>
+
+<!-- Вкладки классов -->
+<div class="class-tabs">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link {% if not active_tab %}active{% endif %}" 
+               href="{{ url_for('admin_tasks') }}">Все задания</a>
+        </li>
+        {% for grade in range(5, 12) %}
+            <li class="nav-item">
+                <a class="nav-link {% if active_tab == grade %}active{% endif %}" 
+                   href="{{ url_for('admin_tasks', class_group=grade) }}">
+                    {{ grade }} класс
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="tasks-container">
+    {% if tasks %}
+        <table class="tasks-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Содержание</th>
+                    <th>Сложность</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.title }}</td>
+                        <td class="task-content-preview">
+                            {{ task.content|striptags|truncate(100) }}
+                        </td>
+                        <td>
+                            {% if task.difficulty == 1 %}
+                                <span class="badge easy">Легкая</span>
+                            {% elif task.difficulty == 2 %}
+                                <span class="badge medium">Средняя</span>
+                            {% else %}
+                                <span class="badge hard">Сложная</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{{ url_for('edit_task', task_id=task.id) }}" 
+                               class="btn btn-sm btn-edit">
+                                Редактировать
+                            </a>
+                            <form action="{{ url_for('delete_task_route', task_id=task.id) }}" 
+                                  method="POST" 
+                                  class="delete-form">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Удалить
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-state">
+            <p>Нет заданий для {{ active_tab }} класса</p>
+            <a href="{{ url_for('create_task') }}" class="btn btn-primary">
+                Создать первое задание
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

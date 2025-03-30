@@ -1,0 +1,492 @@
+{% extends "base.html" %}
+
+{% block title %}{{ duel.name }} - Математическая дуэль{% endblock %}
+
+{% block content %}
+<div class="duel-container">
+    <!-- Шапка дуэли -->
+    <div class="duel-header">
+        <h1>{{ duel.name }} ({{ duel.class_name }})</h1>
+        <div class="duel-meta">
+            <span class="badge {% if duel.status == 'active' %}badge-active{% else %}badge-finished{% endif %}">
+                {% if duel.status == 'active' %}Активна{% else %}Завершена{% endif %}
+            </span>
+            <span class="current-round">Текущий раунд: {{ duel.current_round }}</span>
+        </div>
+    </div>
+
+    <!-- Кнопки управления для администратора -->
+    {% if session.get('is_admin') %}
+    <div class="admin-actions">
+        {% if session.get('is_admin') and duel.status == 'active' and duel.current_round > 0 %}
+<div class="mass-assign-section">
+    <h3>Массовое назначение заданий</h3>
+    <form method="POST" action="{{ url_for('apply_templates_to_round', duel_id=duel.id) }}">
+        <button type="submit" class="btn btn-mass-assign">
+            Применить шаблоны ко всем парам текущего раунда
+        </button>
+    </form>
+</div>
+{% endif %}
+        {% if duel.status == 'active' %}
+            {% if duel.current_round == 0 %}
+                <form method="POST" action="{{ url_for('generate_first_round', duel_id=duel.id) }}">
+                    <button type="submit" class="btn btn-primary">
+                        Сформировать пары для 1-го раунда
+                    </button>
+                </form>
+            {% else %}
+                <form method="POST" action="{{ url_for('generate_round', duel_id=duel.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-primary">
+                        Сгенерировать следующий раунд
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('finish_duel', duel_id=duel.id) }}" class="d-inline ml-2">
+                    <button type="submit" class="btn btn-warning">
+                        Завершить дуэль
+                    </button>
+                </form>
+            {% endif %}
+            {% if session.get('is_admin') and duel.status == 'active' and has_templates %}
+    <form method="POST" action="{{ url_for('generate_tasks', duel_id=duel.id) }}" class="d-inline ml-2">
+        <button type="submit" class="btn btn-warning">
+            <i class="fas fa-magic"></i> Сгенерировать задания
+        </button>
+    </form>
+    {% endif %}
+        {% endif %}
+        <form method="POST" action="{{ url_for('delete_duel', duel_id=duel.id) }}" class="d-inline ml-2">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту дуэль?')">
+                Удалить дуэль
+            </button>
+        </form>
+        {% if duel.status == 'active' %}
+        <a href="{{ url_for('select_round_for_templates', duel_id=duel.id) }}" class="btn btn-template">
+            🎯 Создать шаблоны заданий
+        </a>
+        {% endif %}
+        
+    </div>
+    {% endif %}
+
+    <!-- Турнирная сетка -->
+    <div class="bracket-container">
+        <h2>Турнирная сетка</h2>
+        
+        {% if duel.current_round == 0 %}
+            <div class="alert alert-info">
+                {% if session.get('is_admin') %}
+                    Для начала дуэли сформируйте пары для первого раунда
+                {% else %}
+                    Ожидается формирование пар для первого раунда
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="bracket">
+                {% for round_num in range(1, duel.current_round + 1) %}
+                    <div class="round">
+                        <h3>Раунд {{ round_num }}</h3>
+                        <div class="matches">
+                            {% set round_matches = matches|selectattr('round_number', 'equalto', round_num)|list %}
+                            {% if round_matches %}
+                                {% for match in round_matches %}
+                                    <div class="match {% if match.winner_id %}match-completed{% endif %}">
+                                        <div class="players">
+                                            <div class="player {% if match.winner_id == match.student1_id %}winner{% endif %}">
+                                                {{ match.student1_name or "Свободный проход" }}
+                                            </div>
+                                            {% if match.student2_id %}
+                                            <div class="vs">VS</div>
+                                            <div class="player {% if match.winner_id == match.student2_id %}winner{% endif %}">
+                                                {{ match.student2_name }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% if not session.get('is_admin') and match.student1_id and match.student2_id and match.task_id %}
+                                            <a href="{{ url_for('duel_match', duel_id=duel.id, match_id=match.id) }}" 
+                                                class="btn-start-duel">
+                                                    ▶ Начать выполнение задания
+                                            </a>
+                                        {% endif %}
+                                        {% if match.task_id %}
+                                        <div class="task-info">
+                                            Задание: {{ match.task_title }}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <!-- Действия администратора -->
+                                        {% if session.get('is_admin') and duel.status == 'active' %}
+                                        <div class="match-actions">
+                                            {% if not match.winner_id %}
+                                                {% if not match.task_id %}
+                                                <form method="POST" action="{{ url_for('set_duel_match_task', duel_id=duel.id, match_id=match.id) }}">
+                                                    <select name="task_id" required>
+                                                        <option value="">Выберите задание</option>
+                                                        {% for task in all_tasks %}
+                                                        <option value="{{ task.id }}">{{ task.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm">Назначить</button>
+                                                </form>
+                                                {% else %}
+                                                <form method="POST" action="{{ url_for('set_duel_match_winner', duel_id=duel.id, match_id=match.id) }}">
+                                                    <select name="winner_id" required>
+                                                        <option value="">Выберите победителя</option>
+                                                        {% if match.student1_id %}
+                                                        <option value="{{ match.student1_id }}">{{ match.student1_name }}</option>
+                                                        {% endif %}
+                                                        {% if match.student2_id %}
+                                                        <option value="{{ match.student2_id }}">{{ match.student2_name }}</option>
+                                                        {% endif %}
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm">Подтвердить</button>
+                                                </form>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if match.winner_id %}
+                                        <div class="winner-info">
+                                            Победитель: {{ match.student1_name if match.winner_id == match.student1_id else match.student2_name }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-matches">
+                                    Нет матчей в этом раунде
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Таблица лидеров -->
+    <div class="leaderboard">
+        <h2>Таблица лидеров</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Место</th>
+                    <th>Ученик</th>
+                    <th>Очки</th>
+                    <th>Побед</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in participants %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.points }}</td>
+                    <td>
+                        {% set wins = participant.wins or 0 %}
+                        {% for _ in range(wins if wins <= 3 else 3) %}
+                        ★
+                        {% endfor %}
+                        {% if wins > 3 %}+{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Добавление заданий для следующего раунда -->
+    {% if session.get('is_admin') and duel.status == 'active' and duel.current_round > 0 %}
+    <div class="add-tasks-section">
+        <h3>Добавить задания для раунда {{ duel.current_round + 1 }}</h3>
+        <form method="POST" action="{{ url_for('add_tasks_to_round', duel_id=duel.id) }}">
+            <div class="task-checkboxes">
+                {% for task in all_tasks %}
+                <div class="task-checkbox">
+                    <input type="checkbox" name="task_ids" value="{{ task.id }}" id="task_{{ task.id }}">
+                    <label for="task_{{ task.id }}">{{ task.title }}</label>
+                </div>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="round_number" value="{{ duel.current_round + 1 }}">
+            <button type="submit" class="btn btn-add-tasks">Добавить задания</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.duel-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.duel-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.badge-active {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-finished {
+    background-color: #dc3545;
+    color: white;
+}
+
+.current-round {
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.admin-actions {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.bracket-container {
+    margin: 30px 0;
+}
+
+.bracket {
+    display: flex;
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.round {
+    min-width: 300px;
+    margin-right: 30px;
+}
+
+.round h3 {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.matches {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.match {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.match-completed {
+    background: #e8f5e9;
+}
+
+.players {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.player {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.player.winner {
+    background: #c8e6c9;
+    font-weight: bold;
+}
+
+.vs {
+    margin: 0 10px;
+    font-weight: bold;
+    color: #666;
+}
+
+.task-info {
+    font-size: 14px;
+    color: #666;
+    margin: 8px 0;
+    padding: 5px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.match-actions {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+.match-actions select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin-right: 5px;
+}
+
+.winner-info {
+    margin-top: 10px;
+    padding: 5px;
+    background: #e8f5e9;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.no-matches {
+    padding: 15px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.leaderboard {
+    margin-top: 40px;
+}
+
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.leaderboard th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.leaderboard tr:hover {
+    background-color: #f5f5f5;
+}
+
+.add-tasks-section {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px dashed #ccc;
+}
+
+.task-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.task-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.task-checkbox input {
+    margin-right: 8px;
+}
+
+.btn-add-tasks {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-template {
+    background-color: #9c27b0;
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-template:hover {
+    background-color: #7b1fa2;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .bracket {
+        flex-direction: column;
+    }
+    
+    .round {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}
+</style>
+
+<script>
+function confirmAction(message) {
+    return confirm(message || 'Вы уверены?');
+}
+</script>
+{% endblock %}
+

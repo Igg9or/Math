@@ -1,0 +1,134 @@
+{% if tasks %}
+<div class="tasks-list">
+    {% for task in tasks %}
+    <div class="task">
+        <h3>Задание {{ loop.index }}</h3>
+        <div class="task-text">{{ task.text }}</div>
+        <form method="POST" action="{{ url_for('submit_duel_answer') }}">
+            <input type="hidden" name="duel_id" value="{{ duel_id }}">
+            <input type="hidden" name="match_id" value="{{ match.id }}">
+            <input type="hidden" name="task_index" value="{{ loop.index0 }}">
+            <input type="text" name="answer" required>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-tasks">
+    Ожидаем назначения заданий. Пожалуйста, обновите страницу позже.
+</div>
+{% endif %}
+
+// В student_duel.html добавьте:
+<script>
+// Автообновление каждые 10 секунд
+setInterval(() => {
+    fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+            const newContent = new DOMParser()
+                .parseFromString(html, 'text/html')
+                .querySelector('.tasks-list');
+            
+            if (newContent) {
+                document.querySelector('.tasks-list').innerHTML = newContent.innerHTML;
+            }
+        });
+}, 10000);
+</script>
+
+<style>
+.student-duel-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.duel-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.round-info {
+    font-weight: bold;
+    color: #555;
+}
+
+.duel-match {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.players {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.player {
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.you {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.opponent {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.vs {
+    font-weight: bold;
+    font-size: 20px;
+    color: #666;
+}
+
+.task-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed #ddd;
+}
+
+.task-content {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+.btn-start-task {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-start-task:hover {
+    background: #388E3C;
+}
+
+.no-task {
+    padding: 15px;
+    background: #fff8e1;
+    border-radius: 6px;
+    text-align: center;
+    color: #ff8f00;
+}
+</style>
+{% endblock %}

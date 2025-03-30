@@ -1,0 +1,2 @@
+# Исключить все содержимое папки uploads
+static/uploads/*

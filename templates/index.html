@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Математическая платформа</h1>
+    
+    <!-- Форма для учеников -->
+    <div class="form-section">
+        <h2>Я ученик</h2>
+        <form method="POST" action="{{ url_for('index') }}">
+            <div class="form-group">
+                <label for="class_select">Выберите класс:</label>
+                <select id="class_select" name="class_id" required>
+                    <option value="" disabled selected>-- Выберите класс --</option>
+                    {% for class in classes %}
+                        <option value="{{ class.id }}">{{ class.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div id="student_section" style="display: none;">
+                <div class="form-group">
+                    <label for="student_select">Выберите ученика:</label>
+                    <select id="student_select" name="student_id" required>
+                        <option value="" disabled selected>-- Сначала выберите класс --</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Войти</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Форма для учителя -->
+    <div class="form-section">
+        <h2>Я учитель</h2>
+        <form method="POST" action="{{ url_for('index') }}">
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Войти как учитель</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('class_select').addEventListener('change', function() {
+        const classId = this.value;
+        if (!classId) return;
+        
+        fetch(`/get_students?class_id=${classId}`)
+            .then(response => response.json())
+            .then(data => {
+                const studentSelect = document.getElementById('student_select');
+                studentSelect.innerHTML = '<option value="" disabled selected>Выберите ученика</option>';
+                
+                data.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.id;
+                    option.textContent = student.name;
+                    studentSelect.appendChild(option);
+                });
+                
+                document.getElementById('student_section').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}

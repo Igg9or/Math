@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Управление классом {{ class_name }}{% endblock %}
+
+{% block content %}
+    <h1>Управление классом {{ class_name }}</h1>
+    
+    <h2>Создать новый урок</h2>
+    <form method="POST" action="{{ url_for('create_lesson') }}">
+        <input type="hidden" name="class_id" value="{{ class_id }}">
+        <div>
+            <label>Название урока:</label>
+            <input type="text" name="name" required>
+        </div>
+        
+        <h3>Выберите задания:</h3>
+        {% for task in tasks %}
+            <div>
+                <input type="checkbox" name="task_ids" value="{{ task.id }}">
+                <label>{{ task.template }}</label>
+            </div>
+        {% endfor %}
+        
+        <button type="submit">Создать урок</button>
+    </form>
+    
+    <h2>Существующие уроки</h2>
+    {% if lessons %}
+        <ul>
+            {% for lesson in lessons %}
+                <li>{{ lesson.name }} (создан {{ lesson.created_at }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Нет созданных уроков</p>
+    {% endif %}
+{% endblock %}

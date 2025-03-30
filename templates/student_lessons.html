@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Мои уроки - {{ student_name }}{% endblock %}
+
+{% block content %}
+<div class="student-container">
+    <div class="student-header">
+        <h1>Мои уроки</h1>
+        <div class="student-info">
+            <p>Ученик: <strong>{{ student_name }}</strong></p>
+            <a href="{{ url_for('logout') }}" class="btn btn-logout">Выйти</a>
+        </div>
+    </div>
+    
+    <div class="lessons-list">
+        {% for lesson in lessons %}
+            {% if lesson.type == 'duel' %}
+                <div class="lesson-card duel-card">
+                    <h3>{{ lesson.name }} (Математическая дуэль)</h3>
+                    <p class="lesson-date">Создан: {{ lesson.created_at }}</p>
+                    <div class="duel-status">
+                        {% if lesson.status == 'active' %}
+                            <span class="badge badge-success">Активна</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Завершена</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('student_duel_view', duel_id=lesson.duel_id) }}"> 
+                       class="btn btn-start">
+                        Участвовать
+                    </a>
+                </div>
+            {% else %}
+                <div class="lesson-card">
+                    <h3>{{ lesson.name }}</h3>
+                    <p class="lesson-date">Создан: {{ lesson.created_at }}</p>
+                    <a href="{{ url_for('show_student_tasks', student_id=student_id, lesson_id=lesson.id) }}" 
+                       class="btn btn-start">
+                        Начать урок
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-lessons">
+                <p>Для вашего класса пока нет уроков</p>
+                <img src="{{ url_for('static', filename='images/no-lessons.png') }}" alt="Нет уроков">
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .duel-card {
+        border-left: 4px solid #ffc107;
+    }
+    
+    .badge-success {
+        background-color: #28a745;
+    }
+    
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+</style>
+{% endblock %}

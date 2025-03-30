@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование урока {{ lesson.name }}{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Редактирование урока {{ lesson.name }}</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Название урока:</label>
+            <input type="text" id="name" name="name" value="{{ lesson.name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Выберите задания:</label>
+            <div class="tasks-checkboxes">
+                {% for task in all_tasks %}
+                    <div class="task-checkbox">
+                        <input type="checkbox" id="task_{{ task.id }}" 
+                               name="task_ids" value="{{ task.id }}"
+                               {% if task.id in lesson_tasks|map(attribute='id') %}checked{% endif %}>
+                        <label for="task_{{ task.id }}">{{ task.content }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a href="{{ url_for('class_lessons', class_id=lesson.class_id) }}" 
+               class="btn btn-secondary">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создать математическую дуэль для {{ class_name }}</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>Название дуэли:</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Создать дуэль</button>
+            <a href="{{ url_for('class_lessons', class_id=class_id) }}" class="btn btn-secondary">Отмена</a>
+        </div>
+        <div class="form-group">
+            <label>Выберите задания для 1-го раунда:</label>
+            <div class="tasks-checkboxes">
+                {% for task in all_tasks %}
+                    <div class="task-checkbox">
+                        <input type="checkbox" name="task_ids" value="{{ task.id }}">
+                        <label>{{ task.title }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

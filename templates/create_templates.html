@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создание шаблонов заданий</h1>
+    <h3>Дуэль: {{ duel.name }} | Раунд: {{ round_number }}</h3>
+    
+    <form method="POST">
+        <div id="templates-container">
+            <div class="template-item mb-4 p-3 border rounded">
+                <div class="form-group">
+                    <label>Шаблон задания:</label>
+                    <textarea name="template[]" class="form-control" rows="3" required
+                              placeholder="Пример: Решите уравнение {A}x + {B} = {C}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Формула ответа:</label>
+                    <input type="text" name="formula[]" class="form-control" required
+                           placeholder="Пример: (C-B)/A">
+                    <small class="text-muted">Используйте переменные в фигурных скобках {A}, {B}, {C} как в шаблоне</small>
+                </div>
+            </div>
+        </div>
+        
+        <button type="button" id="add-template" class="btn btn-secondary mb-3">
+            + Добавить еще шаблон
+        </button>
+        
+        <button type="submit" class="btn btn-primary">Сохранить шаблоны</button>
+        <a href="{{ url_for('view_duel', duel_id=duel_id) }}" class="btn btn-outline-secondary">Отмена</a>
+    </form>
+</div>
+
+<script>
+document.getElementById('add-template').addEventListener('click', function() {
+    const container = document.getElementById('templates-container');
+    const templateItem = document.querySelector('.template-item').cloneNode(true);
+    templateItem.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    container.appendChild(templateItem);
+});
+</script>
+
+<style>
+.template-item {
+    background-color: #f8f9fa;
+}
+</style>
+{% endblock %}

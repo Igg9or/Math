@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создание нового задания</h1>
+    
+    <form method="POST" action="{{ url_for('create_task') }}" enctype="multipart/form-data">
+        <!-- Выбор класса -->
+        <div class="form-group">
+            <label>Для класса:</label>
+            <select name="class_group" class="form-control" required>
+                {% for grade in range(5, 12) %}
+                    <option value="{{ grade }}">{{ grade }} класс</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Название задания -->
+        <div class="form-group">
+            <label>Название задания:</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+
+        <!-- Содержание задания -->
+        <div class="form-group">
+            <label>Содержание задания:</label>
+            <textarea name="content" class="form-control" rows="5" required></textarea>
+            <small class="text-muted">Можно использовать HTML-разметку</small>
+            
+            <div class="mt-2">
+                <label>Добавить медиа:</label>
+                <input type="file" name="task_file" class="form-control-file" accept="image/*,video/*">
+                <small class="text-muted">Поддерживаются: JPG, PNG, GIF, MP4</small>
+            </div>
+        </div>
+
+        <!-- Подсказка -->
+        <div class="form-group">
+            <label>Подсказка (необязательно):</label>
+            <textarea name="hint_content" class="form-control" rows="3"></textarea>
+            
+            <div class="mt-2">
+                <label>Добавить медиа для подсказки:</label>
+                <input type="file" name="hint_file" class="form-control-file" accept="image/*,video/*">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Создать задание</button>
+            <a href="{{ url_for('admin_tasks') }}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    textarea.form-control {
+        min-height: 100px;
+    }
+    .form-actions {
+        margin-top: 30px;
+    }
+</style>
+{% endblock %}

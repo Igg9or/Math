@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="duel-round">
+    <h1>Раунд {{ round_number }}</h1>
+    <p>Ваш противник: <strong>{{ opponent }}</strong></p>
+    
+    <div class="tasks">
+        {% for task in tasks %}
+            <div class="task-card">
+                <h3>{{ task.title }}</h3>
+                <div class="task-content">{{ task.content|safe }}</div>
+                <form method="POST" action="/submit_duel_answer">
+                    <input type="hidden" name="duel_id" value="{{ duel_id }}">
+                    <input type="hidden" name="round_number" value="{{ round_number }}">
+                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                    <input type="text" name="answer" placeholder="Ваш ответ" required>
+                    <button type="submit">Отправить</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

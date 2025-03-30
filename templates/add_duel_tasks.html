@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создание шаблонов для раунда {{ round_number }}</h1>
+    
+    <form method="POST">
+        <div id="templates-container">
+            <div class="template-form">
+                <div class="form-group">
+                    <label>Шаблон задания:</label>
+                    <textarea name="templates[]" class="form-control" rows="3" required></textarea>
+                    <small>Пример: "Решите уравнение: {A}x + {B} = {C}"</small>
+                </div>
+                <div class="form-group">
+                    <label>Формула ответа:</label>
+                    <input type="text" name="answer_formulas[]" class="form-control" required>
+                    <small>Пример: "({C}-{B})/{A}" (используйте {A}, {B}, {C} как в шаблоне)</small>
+                </div>
+            </div>
+        </div>
+        
+        <button type="button" id="add-template" class="btn btn-secondary">+ Добавить еще шаблон</button>
+        <button type="submit" class="btn btn-primary">Сохранить задания</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('add-template').addEventListener('click', function() {
+    const container = document.getElementById('templates-container');
+    const newTemplate = document.querySelector('.template-form').cloneNode(true);
+    newTemplate.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    container.appendChild(newTemplate);
+});
+</script>
+
+<style>
+.template-form {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px dashed #ddd;
+}
+</style>
+{% endblock %}

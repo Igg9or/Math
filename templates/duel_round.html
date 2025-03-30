@@ -9,7 +9,7 @@
             <div class="task-card">
                 <h3>{{ task.title }}</h3>
                 <div class="task-content">{{ task.content|safe }}</div>
-                <form method="POST" action="/submit_duel_answer">
+                <form method="POST" action="/submit_duel_answers">
                     <input type="hidden" name="duel_id" value="{{ duel_id }}">
                     <input type="hidden" name="round_number" value="{{ round_number }}">
                     <input type="hidden" name="task_id" value="{{ task.id }}">

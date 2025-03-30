@@ -7,18 +7,18 @@
         <div class="opponent-info">Противник: <strong>{{ opponent }}</strong></div>
     </div>
 
-    <form method="POST" action="{{ url_for('submit_duel_answers', duel_id=duel_id, match_id=match_id) }}">
-        <div class="tasks-list">
-            {% for task, answer in tasks %}
-            <div class="task-item">
-                <div class="task-text">{{ loop.index }}. {{ task }}</div>
-                <input type="text" name="answer_{{ loop.index }}" required>
-                <input type="hidden" name="correct_answer_{{ loop.index }}" value="{{ answer }}">
-            </div>
-            {% endfor %}
+    <form method="POST" action="{{ url_for('submit_duel_answers') }}">
+        <input type="hidden" name="duel_id" value="{{ duel.id }}">
+        <input type="hidden" name="match_id" value="{{ match.id }}">
+        
+        <!-- Для каждого задания -->
+        <div class="task">
+            <p>Задание: {{ task.text }}</p>
+            <input type="number" name="answer" required>
+            <input type="hidden" name="correct_answer" value="{{ task.correct_answer }}">
         </div>
         
-        <button type="submit" class="btn-submit">Отправить ответы</button>
+        <button type="submit">Отправить ответ</button>
     </form>
 </div>
 

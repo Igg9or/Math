@@ -1,134 +1,280 @@
-{% if tasks %}
-<div class="tasks-list">
-    {% for task in tasks %}
-    <div class="task">
-        <h3>Задание {{ loop.index }}</h3>
-        <div class="task-text">{{ task.text }}</div>
-        <form method="POST" action="{{ url_for('submit_duel_answer') }}">
-            <input type="hidden" name="duel_id" value="{{ duel_id }}">
-            <input type="hidden" name="match_id" value="{{ match.id }}">
-            <input type="hidden" name="task_index" value="{{ loop.index0 }}">
-            <input type="text" name="answer" required>
-            <button type="submit">Отправить</button>
-        </form>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="student-duel-container">
+    <div class="duel-header">
+        <h1>Дуэль: {% if duel and 'name' in duel %}{{ duel['name'] }}{% else %}Без названия{% endif %}</h1>
+        <div class="round-info">Раунд {% if match and 'round_number' in match %}{{ match['round_number'] }}{% else %}1{% endif %}</div>
     </div>
-    {% endfor %}
-</div>
-{% else %}
-<div class="no-tasks">
-    Ожидаем назначения заданий. Пожалуйста, обновите страницу позже.
-</div>
-{% endif %}
 
-// В student_duel.html добавьте:
-<script>
-// Автообновление каждые 10 секунд
-setInterval(() => {
-    fetch(window.location.href)
-        .then(response => response.text())
-        .then(html => {
-            const newContent = new DOMParser()
-                .parseFromString(html, 'text/html')
-                .querySelector('.tasks-list');
-            
-            if (newContent) {
-                document.querySelector('.tasks-list').innerHTML = newContent.innerHTML;
-            }
-        });
-}, 10000);
-</script>
+    <div class="duel-match">
+        <div class="players">
+            <div class="player you">
+                <span class="player-label">Вы:</span>
+                <span class="player-name">
+                    {% if current_student and 'name' in current_student %}
+                        {{ current_student['name'] }}
+                    {% else %}
+                        Неизвестный ученик
+                    {% endif %}
+                </span>
+            </div>
+            <div class="vs">VS</div>
+            <div class="player opponent">
+                <span class="player-label">Противник:</span>
+                <span class="player-name">
+                    {% if opponent and 'name' in opponent %}
+                        {{ opponent['name'] }}
+                    {% else %}
+                        Неизвестный противник
+                    {% endif %}
+                </span>
+            </div>
+        </div>
 
+        <div class="task-section">
+            {% if tasks %}
+            <div class="tasks-list">
+                {% for task in tasks %}
+                <div class="task-card">
+                    <h3 class="task-title">Задание {{ loop.index }}</h3>
+                    <div class="task-content">
+                        {% if 'text' in task %}
+                            {{ task['text'] }}
+                        {% else %}
+                            Текст задания не загружен
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="{{ url_for('submit_duel_answers') }}">
+                        <input type="hidden" name="duel_id" value="{{ duel.id }}">
+                        <input type="hidden" name="match_id" value="{{ match.id }}">
+                        
+                        <form method="POST" action="{{ url_for('submit_duel_answers') }}">
+                            <input type="hidden" name="duel_id" value="{{ duel.id }}">
+                            <input type="hidden" name="match_id" value="{{ match.id }}">
+                            
+                            {% for task in tasks %}
+                            <div class="task-card">
+                                <div class="task-content">{{ task.text }}</div>
+                                <input type="number" name="answer" required>
+                                <input type="hidden" name="correct_answer" value="{{ task.answer }}">
+                            </div>
+                            {% endfor %}
+                            
+                            <button type="submit">Отправить ответ</button>
+                        </form>
+                        
+                        <button type="submit">Отправить ответ</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-tasks-message">
+                <p>Ожидаем назначения заданий. Пожалуйста, обновите страницу позже.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
 <style>
+/* Основные стили */
 .student-duel-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
 .duel-header {
     text-align: center;
     margin-bottom: 30px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #eee;
+    border-bottom: 2px solid #3498db;
+}
+
+.duel-header h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 28px;
 }
 
 .round-info {
+    font-size: 18px;
+    color: #7f8c8d;
     font-weight: bold;
-    color: #555;
 }
 
-.duel-match {
-    background: white;
-    border-radius: 8px;
-    padding: 25px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
+/* Стили игроков */
 .players {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 30px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
 }
 
 .player {
     padding: 15px 25px;
     border-radius: 8px;
     font-weight: bold;
+    text-align: center;
+    min-width: 200px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.player-label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.player-name {
     font-size: 18px;
 }
 
 .you {
     background: #e3f2fd;
     color: #1976d2;
+    border: 2px solid #bbdefb;
 }
 
 .opponent {
     background: #ffebee;
     color: #d32f2f;
+    border: 2px solid #ffcdd2;
 }
 
 .vs {
+    font-size: 24px;
     font-weight: bold;
-    font-size: 20px;
-    color: #666;
+    color: #2c3e50;
+    padding: 0 15px;
 }
 
+/* Стили заданий */
 .task-section {
     margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px dashed #ddd;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+.task-title {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 20px;
 }
 
 .task-content {
-    background: #f5f5f5;
-    padding: 15px;
-    border-radius: 6px;
+    font-size: 18px;
     margin: 15px 0;
-}
-
-.btn-start-task {
-    display: inline-block;
-    padding: 12px 25px;
-    background: #4CAF50;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-.btn-start-task:hover {
-    background: #388E3C;
-}
-
-.no-task {
     padding: 15px;
-    background: #fff8e1;
+    background: #f9f9f9;
     border-radius: 6px;
+    line-height: 1.5;
+}
+
+.task-form {
+    margin-top: 20px;
+}
+
+.answer-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.btn-submit {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.btn-submit:hover {
+    background: #219653;
+}
+
+.no-tasks-message {
     text-align: center;
-    color: #ff8f00;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #7f8c8d;
+    font-size: 16px;
+    border: 1px dashed #ddd;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .players {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .player {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .vs {
+        padding: 15px 0;
+    }
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(() => {
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    const newContent = new DOMParser()
+                        .parseFromString(html, 'text/html')
+                        .querySelector('.tasks-list');
+                    
+                    if (newContent) {
+                        document.querySelector('.tasks-list').innerHTML = newContent.innerHTML;
+                    }
+                })
+                .catch(error => console.error('Ошибка обновления:', error));
+        }, 10000);
+    });
+    </script>
 {% endblock %}

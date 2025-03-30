@@ -1,0 +1,3996 @@
+﻿
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\add_duel_tasks.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создание шаблонов для раунда {{ round_number }}</h1>
+    
+    <form method="POST">
+        <div id="templates-container">
+            <div class="template-form">
+                <div class="form-group">
+                    <label>Шаблон задания:</label>
+                    <textarea name="templates[]" class="form-control" rows="3" required></textarea>
+                    <small>Пример: "Решите уравнение: {A}x + {B} = {C}"</small>
+                </div>
+                <div class="form-group">
+                    <label>Формула ответа:</label>
+                    <input type="text" name="answer_formulas[]" class="form-control" required>
+                    <small>Пример: "({C}-{B})/{A}" (используйте {A}, {B}, {C} как в шаблоне)</small>
+                </div>
+            </div>
+        </div>
+        
+        <button type="button" id="add-template" class="btn btn-secondary">+ Добавить еще шаблон</button>
+        <button type="submit" class="btn btn-primary">Сохранить задания</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('add-template').addEventListener('click', function() {
+    const container = document.getElementById('templates-container');
+    const newTemplate = document.querySelector('.template-form').cloneNode(true);
+    newTemplate.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    container.appendChild(newTemplate);
+});
+</script>
+
+<style>
+.template-form {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border: 1px dashed #ddd;
+}
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\admin_class.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}Управление классом {{ class_name }}{% endblock %}
+
+{% block content %}
+    <h1>Управление классом {{ class_name }}</h1>
+    
+    <h2>Создать новый урок</h2>
+    <form method="POST" action="{{ url_for('create_lesson') }}">
+        <input type="hidden" name="class_id" value="{{ class_id }}">
+        <div>
+            <label>Название урока:</label>
+            <input type="text" name="name" required>
+        </div>
+        
+        <h3>Выберите задания:</h3>
+        {% for task in tasks %}
+            <div>
+                <input type="checkbox" name="task_ids" value="{{ task.id }}">
+                <label>{{ task.template }}</label>
+            </div>
+        {% endfor %}
+        
+        <button type="submit">Создать урок</button>
+    </form>
+    
+    <h2>Существующие уроки</h2>
+    {% if lessons %}
+        <ul>
+            {% for lesson in lessons %}
+                <li>{{ lesson.name }} (создан {{ lesson.created_at }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Нет созданных уроков</p>
+    {% endif %}
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\admin_create_task.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создание нового задания</h1>
+    
+    <form method="POST" action="{{ url_for('create_task') }}" enctype="multipart/form-data">
+        <!-- Выбор класса -->
+        <div class="form-group">
+            <label>Для класса:</label>
+            <select name="class_group" class="form-control" required>
+                {% for grade in range(5, 12) %}
+                    <option value="{{ grade }}">{{ grade }} класс</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Название задания -->
+        <div class="form-group">
+            <label>Название задания:</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+
+        <!-- Содержание задания -->
+        <div class="form-group">
+            <label>Содержание задания:</label>
+            <textarea name="content" class="form-control" rows="5" required></textarea>
+            <small class="text-muted">Можно использовать HTML-разметку</small>
+            
+            <div class="mt-2">
+                <label>Добавить медиа:</label>
+                <input type="file" name="task_file" class="form-control-file" accept="image/*,video/*">
+                <small class="text-muted">Поддерживаются: JPG, PNG, GIF, MP4</small>
+            </div>
+        </div>
+
+        <!-- Подсказка -->
+        <div class="form-group">
+            <label>Подсказка (необязательно):</label>
+            <textarea name="hint_content" class="form-control" rows="3"></textarea>
+            
+            <div class="mt-2">
+                <label>Добавить медиа для подсказки:</label>
+                <input type="file" name="hint_file" class="form-control-file" accept="image/*,video/*">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Создать задание</button>
+            <a href="{{ url_for('admin_tasks') }}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    textarea.form-control {
+        min-height: 100px;
+    }
+    .form-actions {
+        margin-top: 30px;
+    }
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\admin_dashboard.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}Панель администратора{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Панель администратора</h1>
+    
+    <div class="classes-grid">
+        {% for class in classes %}
+            <div class="class-card">
+                <h3>{{ class.name }}</h3>
+                <div class="class-actions">
+                    <a href="{{ url_for('class_lessons', class_id=class.id) }}" class="btn btn-sm btn-primary">
+                        Управление уроками
+                    </a>
+                    <a href="{{ url_for('create_duel', class_id=class.id) }}" class="btn btn-sm btn-success">
+                        Создать дуэль
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div class="admin-actions mt-4">
+        <a href="{{ url_for('admin_tasks') }}" class="btn btn-secondary">
+            Управление заданиями
+        </a>
+    </div>
+</div>
+
+<style>
+    .classes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+    
+    .class-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .class-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .class-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\admin_tasks.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}Управление заданиями{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Управление заданиями</h1>
+    <a href="{{ url_for('create_task') }}" class="btn btn-primary">
+        + Создать новое задание
+    </a>
+</div>
+
+<!-- Вкладки классов -->
+<div class="class-tabs">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link {% if not active_tab %}active{% endif %}" 
+               href="{{ url_for('admin_tasks') }}">Все задания</a>
+        </li>
+        {% for grade in range(5, 12) %}
+            <li class="nav-item">
+                <a class="nav-link {% if active_tab == grade %}active{% endif %}" 
+                   href="{{ url_for('admin_tasks', class_group=grade) }}">
+                    {{ grade }} класс
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="tasks-container">
+    {% if tasks %}
+        <table class="tasks-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Содержание</th>
+                    <th>Сложность</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.title }}</td>
+                        <td class="task-content-preview">
+                            {{ task.content|striptags|truncate(100) }}
+                        </td>
+                        <td>
+                            {% if task.difficulty == 1 %}
+                                <span class="badge easy">Легкая</span>
+                            {% elif task.difficulty == 2 %}
+                                <span class="badge medium">Средняя</span>
+                            {% else %}
+                                <span class="badge hard">Сложная</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{{ url_for('edit_task', task_id=task.id) }}" 
+                               class="btn btn-sm btn-edit">
+                                Редактировать
+                            </a>
+                            <form action="{{ url_for('delete_task_route', task_id=task.id) }}" 
+                                  method="POST" 
+                                  class="delete-form">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Удалить
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-state">
+            <p>Нет заданий для {{ active_tab }} класса</p>
+            <a href="{{ url_for('create_task') }}" class="btn btn-primary">
+                Создать первое задание
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\base.html
+================================================================================
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Математическая платформа{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            {% if session.get('is_admin') %}
+                <a href="{{ url_for('admin_dashboard') }}">Панель учителя</a>
+                <a href="{{ url_for('admin_tasks') }}">Задания</a>
+            {% elif student_id is defined %}
+                <a href="{{ url_for('student_lessons', student_id=student_id) }}">Мои уроки</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" class="logout">Выйти</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\class_lessons.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}Уроки класса {{ class_name }}{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Уроки класса {{ class_name }}</h1>
+    
+    <div class="admin-actions">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+            ← Назад к классам
+        </a>
+    </div>
+    
+    <!-- Форма создания обычного урока -->
+    <div class="create-section">
+        <h2>Создать новый урок</h2>
+        <form method="POST" action="{{ url_for('create_lesson') }}">
+            <input type="hidden" name="class_id" value="{{ class_id }}">
+            
+            <div class="form-group">
+                <label for="name">Название урока:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Выберите задания:</label>
+                <div class="tasks-checkboxes">
+                    {% for task in all_tasks %}
+                        <div class="task-checkbox">
+                            <input type="checkbox" id="task_{{ task.id }}" 
+                                   name="task_ids" value="{{ task.id }}">
+                            <label for="task_{{ task.id }}">{{ task.title }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Создать урок</button>
+        </form>
+    </div>
+    
+    <!-- Форма создания дуэли -->
+    <div class="create-section mt-4">
+        <h2>Создать математическую дуэль</h2>
+        <form method="POST" action="{{ url_for('create_duel', class_id=class_id) }}">
+            <div class="form-group">
+                <label for="duel_name">Название дуэли:</label>
+                <input type="text" id="duel_name" name="name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Создать дуэль</button>
+        </form>
+    </div>
+    
+    <!-- Список уроков и дуэлей -->
+    <div class="lessons-list mt-4">
+        <h2>Список уроков и дуэлей</h2>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Тип</th>
+                    <th>Статус</th>
+                    <th>Дата создания</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lessons %}
+                    <tr>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                <a href="{{ url_for('view_duel', duel_id=item.id) }}">{{ item.name }}</a>
+                            {% else %}
+                                {{ item.name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                <span class="badge badge-warning">Дуэль</span>
+                            {% else %}
+                                <span class="badge badge-primary">Урок</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                {% if item.status == 'active' %}
+                                    <span class="badge badge-success">Активна</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">Завершена</span>
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ item.created_at }}</td>
+                        <td>
+                            {% if item.type == 'duel' %}
+                                <a href="{{ url_for('view_duel', duel_id=item.id) }}" class="btn btn-sm btn-info">
+                                    Управление
+                                </a>
+                                <form action="{{ url_for('delete_duel', duel_id=item.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить эту дуэль?')">
+                                        Удалить
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a href="{{ url_for('edit_lesson', lesson_id=item.id) }}" class="btn btn-sm btn-primary">
+                                    Редактировать
+                                </a>
+                                <form action="{{ url_for('delete_lesson', lesson_id=item.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить этот урок?')">
+                                        Удалить
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Нет созданных уроков или дуэлей</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .create-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .badge-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .table {
+        background: white;
+    }
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\create_duel.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создать математическую дуэль для {{ class_name }}</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>Название дуэли:</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Создать дуэль</button>
+            <a href="{{ url_for('class_lessons', class_id=class_id) }}" class="btn btn-secondary">Отмена</a>
+        </div>
+        <div class="form-group">
+            <label>Выберите задания для 1-го раунда:</label>
+            <div class="tasks-checkboxes">
+                {% for task in all_tasks %}
+                    <div class="task-checkbox">
+                        <input type="checkbox" name="task_ids" value="{{ task.id }}">
+                        <label>{{ task.title }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\create_templates.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Создание шаблонов заданий</h1>
+    <h3>Дуэль: {{ duel.name }} | Раунд: {{ round_number }}</h3>
+    
+    <form method="POST">
+        <div id="templates-container">
+            <div class="template-item mb-4 p-3 border rounded">
+                <div class="form-group">
+                    <label>Шаблон задания:</label>
+                    <textarea name="template[]" class="form-control" rows="3" required
+                              placeholder="Пример: Решите уравнение {A}x + {B} = {C}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Формула ответа:</label>
+                    <input type="text" name="formula[]" class="form-control" required
+                           placeholder="Пример: (C-B)/A">
+                    <small class="text-muted">Используйте переменные в фигурных скобках {A}, {B}, {C} как в шаблоне</small>
+                </div>
+            </div>
+        </div>
+        
+        <button type="button" id="add-template" class="btn btn-secondary mb-3">
+            + Добавить еще шаблон
+        </button>
+        
+        <button type="submit" class="btn btn-primary">Сохранить шаблоны</button>
+        <a href="{{ url_for('view_duel', duel_id=duel_id) }}" class="btn btn-outline-secondary">Отмена</a>
+    </form>
+</div>
+
+<script>
+document.getElementById('add-template').addEventListener('click', function() {
+    const container = document.getElementById('templates-container');
+    const templateItem = document.querySelector('.template-item').cloneNode(true);
+    templateItem.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    container.appendChild(templateItem);
+});
+</script>
+
+<style>
+.template-item {
+    background-color: #f8f9fa;
+}
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\duel_match.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="duel-task-container">
+    <div class="duel-header">
+        <h1>Дуэль: {{ duel_name }} (Раунд {{ round_number }})</h1>
+        <div class="opponent-info">Противник: <strong>{{ opponent }}</strong></div>
+    </div>
+
+    <form method="POST" action="{{ url_for('submit_duel_answers') }}">
+        <input type="hidden" name="duel_id" value="{{ duel.id }}">
+        <input type="hidden" name="match_id" value="{{ match.id }}">
+        
+        <!-- Для каждого задания -->
+        <div class="task">
+            <p>Задание: {{ task.text }}</p>
+            <input type="number" name="answer" required>
+            <input type="hidden" name="correct_answer" value="{{ task.correct_answer }}">
+        </div>
+        
+        <button type="submit">Отправить ответ</button>
+    </form>
+</div>
+
+<style>
+.duel-task-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.duel-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.opponent-info {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.tasks-list {
+    margin-bottom: 30px;
+}
+
+.task-item {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.task-text {
+    margin-bottom: 15px;
+    font-size: 17px;
+}
+
+.task-item input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 18px;
+    cursor: pointer;
+}
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\duel_round.html
+================================================================================
+
+
+{% extends "base.html" %}
+{% block content %}
+<div class="duel-round">
+    <h1>Раунд {{ round_number }}</h1>
+    <p>Ваш противник: <strong>{{ opponent }}</strong></p>
+    
+    <div class="tasks">
+        {% for task in tasks %}
+            <div class="task-card">
+                <h3>{{ task.title }}</h3>
+                <div class="task-content">{{ task.content|safe }}</div>
+                <form method="POST" action="/submit_duel_answers">
+                    <input type="hidden" name="duel_id" value="{{ duel_id }}">
+                    <input type="hidden" name="round_number" value="{{ round_number }}">
+                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                    <input type="text" name="answer" placeholder="Ваш ответ" required>
+                    <button type="submit">Отправить</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\edit_lesson.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}Редактирование урока {{ lesson.name }}{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Редактирование урока {{ lesson.name }}</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Название урока:</label>
+            <input type="text" id="name" name="name" value="{{ lesson.name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Выберите задания:</label>
+            <div class="tasks-checkboxes">
+                {% for task in all_tasks %}
+                    <div class="task-checkbox">
+                        <input type="checkbox" id="task_{{ task.id }}" 
+                               name="task_ids" value="{{ task.id }}"
+                               {% if task.id in lesson_tasks|map(attribute='id') %}checked{% endif %}>
+                        <label for="task_{{ task.id }}">{{ task.content }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a href="{{ url_for('class_lessons', class_id=lesson.class_id) }}" 
+               class="btn btn-secondary">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\index.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Математическая платформа</h1>
+    
+    <!-- Форма для учеников -->
+    <div class="form-section">
+        <h2>Я ученик</h2>
+        <form method="POST" action="{{ url_for('index') }}">
+            <div class="form-group">
+                <label for="class_select">Выберите класс:</label>
+                <select id="class_select" name="class_id" required>
+                    <option value="" disabled selected>-- Выберите класс --</option>
+                    {% for class in classes %}
+                        <option value="{{ class.id }}">{{ class.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div id="student_section" style="display: none;">
+                <div class="form-group">
+                    <label for="student_select">Выберите ученика:</label>
+                    <select id="student_select" name="student_id" required>
+                        <option value="" disabled selected>-- Сначала выберите класс --</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Войти</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Форма для учителя -->
+    <div class="form-section">
+        <h2>Я учитель</h2>
+        <form method="POST" action="{{ url_for('index') }}">
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Войти как учитель</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('class_select').addEventListener('change', function() {
+        const classId = this.value;
+        if (!classId) return;
+        
+        fetch(`/get_students?class_id=${classId}`)
+            .then(response => response.json())
+            .then(data => {
+                const studentSelect = document.getElementById('student_select');
+                studentSelect.innerHTML = '<option value="" disabled selected>Выберите ученика</option>';
+                
+                data.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.id;
+                    option.textContent = student.name;
+                    studentSelect.appendChild(option);
+                });
+                
+                document.getElementById('student_section').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\select_round.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Выберите раунд для создания шаблонов</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>Номер раунда:</label>
+            <input type="number" name="round_number" min="1" value="{{ current_round }}" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Продолжить</button>
+        <a href="{{ url_for('view_duel', duel_id=duel_id) }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\student_duel.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="student-duel-container">
+    <div class="duel-header">
+        <h1>Дуэль: {% if duel and 'name' in duel %}{{ duel['name'] }}{% else %}Без названия{% endif %}</h1>
+        <div class="round-info">Раунд {% if match and 'round_number' in match %}{{ match['round_number'] }}{% else %}1{% endif %}</div>
+    </div>
+
+    <div class="duel-match">
+        <div class="players">
+            <div class="player you">
+                <span class="player-label">Вы:</span>
+                <span class="player-name">
+                    {% if current_student and 'name' in current_student %}
+                        {{ current_student['name'] }}
+                    {% else %}
+                        Неизвестный ученик
+                    {% endif %}
+                </span>
+            </div>
+            <div class="vs">VS</div>
+            <div class="player opponent">
+                <span class="player-label">Противник:</span>
+                <span class="player-name">
+                    {% if opponent and 'name' in opponent %}
+                        {{ opponent['name'] }}
+                    {% else %}
+                        Неизвестный противник
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="task-section">
+            {% if tasks %}
+            <div class="tasks-list">
+                {% for task in tasks %}
+                <div class="task-card">
+                    <h3 class="task-title">Задание {{ loop.index }}</h3>
+                    <div class="task-content">
+                        {% if 'text' in task %}
+                            {{ task['text'] }}
+                        {% else %}
+                            Текст задания не загружен
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="{{ url_for('submit_duel_answers') }}">
+                        <input type="hidden" name="duel_id" value="{{ duel.id }}">
+                        <input type="hidden" name="match_id" value="{{ match.id }}">
+                        
+                        <!-- Для каждого задания -->
+                        <div class="task">
+                            <p>Задание: {{ task.text }}</p>
+                            <input type="number" name="answer" required>
+                            <input type="hidden" name="correct_answer" value="{{ task.correct_answer }}">
+                        </div>
+                        
+                        <button type="submit">Отправить ответ</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-tasks-message">
+                <p>Ожидаем назначения заданий. Пожалуйста, обновите страницу позже.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+/* Основные стили */
+.student-duel-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.duel-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #3498db;
+}
+
+.duel-header h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.round-info {
+    font-size: 18px;
+    color: #7f8c8d;
+    font-weight: bold;
+}
+
+/* Стили игроков */
+.players {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.player {
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    min-width: 200px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.player-label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.player-name {
+    font-size: 18px;
+}
+
+.you {
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 2px solid #bbdefb;
+}
+
+.opponent {
+    background: #ffebee;
+    color: #d32f2f;
+    border: 2px solid #ffcdd2;
+}
+
+.vs {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 0 15px;
+}
+
+/* Стили заданий */
+.task-section {
+    margin-top: 30px;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+}
+
+.task-title {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 20px;
+}
+
+.task-content {
+    font-size: 18px;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    line-height: 1.5;
+}
+
+.task-form {
+    margin-top: 20px;
+}
+
+.answer-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.btn-submit {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.btn-submit:hover {
+    background: #219653;
+}
+
+.no-tasks-message {
+    text-align: center;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #7f8c8d;
+    font-size: 16px;
+    border: 1px dashed #ddd;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .players {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .player {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .vs {
+        padding: 15px 0;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(() => {
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    const newContent = new DOMParser()
+                        .parseFromString(html, 'text/html')
+                        .querySelector('.tasks-list');
+                    
+                    if (newContent) {
+                        document.querySelector('.tasks-list').innerHTML = newContent.innerHTML;
+                    }
+                })
+                .catch(error => console.error('Ошибка обновления:', error));
+        }, 10000);
+    });
+    </script>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\student_lessons.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}Мои уроки - {{ student_name }}{% endblock %}
+
+{% block content %}
+<div class="student-container">
+    <div class="student-header">
+        <h1>Мои уроки</h1>
+        <div class="student-info">
+            <p>Ученик: <strong>{{ student_name }}</strong></p>
+            <a href="{{ url_for('logout') }}" class="btn btn-logout">Выйти</a>
+        </div>
+    </div>
+    
+    <div class="lessons-list">
+        {% for lesson in lessons %}
+            {% if lesson.type == 'duel' %}
+                <div class="lesson-card duel-card">
+                    <h3>{{ lesson.name }} (Математическая дуэль)</h3>
+                    <p class="lesson-date">Создан: {{ lesson.created_at }}</p>
+                    <div class="duel-status">
+                        {% if lesson.status == 'active' %}
+                            <span class="badge badge-success">Активна</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Завершена</span>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('student_duel_view', duel_id=lesson.duel_id) }}"> 
+                       class="btn btn-start">
+                        Участвовать
+                    </a>
+                </div>
+            {% else %}
+                <div class="lesson-card">
+                    <h3>{{ lesson.name }}</h3>
+                    <p class="lesson-date">Создан: {{ lesson.created_at }}</p>
+                    <a href="{{ url_for('show_student_tasks', student_id=student_id, lesson_id=lesson.id) }}" 
+                       class="btn btn-start">
+                        Начать урок
+                    </a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-lessons">
+                <p>Для вашего класса пока нет уроков</p>
+                <img src="{{ url_for('static', filename='images/no-lessons.png') }}" alt="Нет уроков">
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .duel-card {
+        border-left: 4px solid #ffc107;
+    }
+    
+    .badge-success {
+        background-color: #28a745;
+    }
+    
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\student_tasks.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}Урок {{ lesson_name }} - {{ student_name }}{% endblock %}
+
+{% block content %}
+<div class="lesson-container">
+    <div class="lesson-header">
+        <h1>{{ lesson_name }}</h1>
+        <div class="student-info">
+            <span>Ученик: <strong>{{ student_name }}</strong></span>
+            <a href="{{ url_for('student_lessons', student_id=student_id) }}" class="back-btn">
+                ← К списку уроков
+            </a>
+        </div>
+    </div>
+
+    <form method="POST" class="tasks-form">
+        {% for task in tasks %}
+        <div class="task-card">
+            <div class="task-header">
+                <div class="task-number">Задание {{ loop.index }}</div>
+                <div class="task-points">Баллы: {{ task.points|default(5) }}</div>
+            </div>
+            
+            <div class="task-content">
+                <!-- Основное содержание задания (с поддержкой HTML) -->
+                <div class="task-text">
+                    {{ task.text|safe }}
+                </div>
+                
+                <!-- Блок для ответа -->
+                <div class="answer-section">
+                    <label for="answer_{{ task.id }}">Ваш ответ:</label>
+                    {% if task.answer_type == 'text' %}
+                        <input type="text" id="answer_{{ task.id }}" name="answer_{{ task.id }}" required>
+                    {% elif task.answer_type == 'number' %}
+                        <input type="number" step="any" id="answer_{{ task.id }}" name="answer_{{ task.id }}" required>
+                    {% else %}
+                        <textarea id="answer_{{ task.id }}" name="answer_{{ task.id }}" rows="3" required></textarea>
+                    {% endif %}
+                </div>
+                
+                <!-- Блок подсказок -->
+                <div class="hint-section">
+                    <button type="button" class="hint-btn" onclick="toggleHint({{ loop.index }})">
+                        <span class="hint-icon">?</span> Нужна подсказка
+                    </button>
+                    
+                    <div id="hint-{{ loop.index }}" class="hint-content" style="display:none">
+                        {% if task.hints %}
+                            {% for hint in task.hints %}
+                                <div class="hint-item">
+                                    {{ hint.content|safe }}
+                                    {% if hint.image %}
+                                        <img src="{{ url_for('static', filename='uploads/' + hint.image) }}" 
+                                             class="hint-image" alt="Подсказка">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>Подсказок пока нет</p>
+                        {% endif %}
+                        
+                        <!-- Кнопка запроса помощи у ИИ (будет реализовано позже) -->
+                        <button type="button" class="ai-help-btn" onclick="requestAIHelp({{ task.id }})">
+                            Запросить помощь у ИИ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="form-actions">
+            <button type="submit" class="submit-btn">Отправить ответы</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Показ/скрытие подсказок
+function toggleHint(index) {
+    const hint = document.getElementById(`hint-${index}`);
+    hint.style.display = hint.style.display === 'none' ? 'block' : 'none';
+}
+
+// Запрос помощи у ИИ (заглушка для будущей реализации)
+function requestAIHelp(taskId) {
+    alert("Функция помощи от ИИ будет доступна в следующем обновлении!");
+    // Здесь будет AJAX-запрос к серверу
+}
+
+// Инициализация - скрываем все подсказки при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.hint-content').forEach(hint => {
+        hint.style.display = 'none';
+    });
+});
+</script>
+
+<style>
+/* Стили для задания */
+.lesson-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.task-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.task-number {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.task-points {
+    background: #f0f8ff;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+}
+
+.task-text {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.task-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.answer-section {
+    margin: 20px 0;
+}
+
+.answer-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.answer-section input,
+.answer-section textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.hint-section {
+    margin-top: 20px;
+    border-top: 1px dashed #eee;
+    padding-top: 15px;
+}
+
+.hint-btn {
+    background: #e3f2fd;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #1976d2;
+    font-size: 14px;
+}
+
+.hint-btn:hover {
+    background: #bbdefb;
+}
+
+.hint-content {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.hint-item {
+    margin-bottom: 15px;
+}
+
+.hint-item img {
+    max-width: 100%;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.ai-help-btn {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.ai-help-btn:hover {
+    background: #c8e6c9;
+}
+
+.submit-btn {
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.submit-btn:hover {
+    background: #388e3c;
+}
+
+@media (max-width: 600px) {
+    .lesson-container {
+        padding: 10px;
+    }
+    
+    .task-card {
+        padding: 15px;
+    }
+}
+</style>
+{% endblock %}
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\tasks.html
+================================================================================
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задания</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Привет, {{ student_name }}!</h1>
+        <div class="tasks">
+            {% for task in tasks %}
+                <div class="task-card">
+                    <h3>Задание {{ loop.index }}</h3>
+                    <p>{{ task.text }}</p>
+                    <input type="text" placeholder="Ваш ответ">
+                    <button>Проверить</button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\templates\view_duel.html
+================================================================================
+
+
+{% extends "base.html" %}
+
+{% block title %}{{ duel.name }} - Математическая дуэль{% endblock %}
+
+{% block content %}
+<div class="duel-container">
+    <!-- Шапка дуэли -->
+    <div class="duel-header">
+        <h1>{{ duel.name }} ({{ duel.class_name }})</h1>
+        <div class="duel-meta">
+            <span class="badge {% if duel.status == 'active' %}badge-active{% else %}badge-finished{% endif %}">
+                {% if duel.status == 'active' %}Активна{% else %}Завершена{% endif %}
+            </span>
+            <span class="current-round">Текущий раунд: {{ duel.current_round }}</span>
+        </div>
+    </div>
+
+    <!-- Кнопки управления для администратора -->
+    {% if session.get('is_admin') %}
+    <div class="admin-actions">
+        {% if session.get('is_admin') and duel.status == 'active' and duel.current_round > 0 %}
+<div class="mass-assign-section">
+    <h3>Массовое назначение заданий</h3>
+    <form method="POST" action="{{ url_for('apply_templates_to_round', duel_id=duel.id) }}">
+        <button type="submit" class="btn btn-mass-assign">
+            Применить шаблоны ко всем парам текущего раунда
+        </button>
+    </form>
+</div>
+{% endif %}
+        {% if duel.status == 'active' %}
+            {% if duel.current_round == 0 %}
+                <form method="POST" action="{{ url_for('generate_first_round', duel_id=duel.id) }}">
+                    <button type="submit" class="btn btn-primary">
+                        Сформировать пары для 1-го раунда
+                    </button>
+                </form>
+            {% else %}
+                <form method="POST" action="{{ url_for('generate_round', duel_id=duel.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-primary">
+                        Сгенерировать следующий раунд
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('finish_duel', duel_id=duel.id) }}" class="d-inline ml-2">
+                    <button type="submit" class="btn btn-warning">
+                        Завершить дуэль
+                    </button>
+                </form>
+            {% endif %}
+            {% if session.get('is_admin') and duel.status == 'active' and has_templates %}
+    <form method="POST" action="{{ url_for('generate_tasks', duel_id=duel.id) }}" class="d-inline ml-2">
+        <button type="submit" class="btn btn-warning">
+            <i class="fas fa-magic"></i> Сгенерировать задания
+        </button>
+    </form>
+    {% endif %}
+        {% endif %}
+        <form method="POST" action="{{ url_for('delete_duel', duel_id=duel.id) }}" class="d-inline ml-2">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту дуэль?')">
+                Удалить дуэль
+            </button>
+        </form>
+        {% if duel.status == 'active' %}
+        <a href="{{ url_for('select_round_for_templates', duel_id=duel.id) }}" class="btn btn-template">
+            🎯 Создать шаблоны заданий
+        </a>
+        {% endif %}
+        
+    </div>
+    {% endif %}
+
+    <!-- Турнирная сетка -->
+    <div class="bracket-container">
+        <h2>Турнирная сетка</h2>
+        
+        {% if duel.current_round == 0 %}
+            <div class="alert alert-info">
+                {% if session.get('is_admin') %}
+                    Для начала дуэли сформируйте пары для первого раунда
+                {% else %}
+                    Ожидается формирование пар для первого раунда
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="bracket">
+                {% for round_num in range(1, duel.current_round + 1) %}
+                    <div class="round">
+                        <h3>Раунд {{ round_num }}</h3>
+                        <div class="matches">
+                            {% set round_matches = matches|selectattr('round_number', 'equalto', round_num)|list %}
+                            {% if round_matches %}
+                                {% for match in round_matches %}
+                                    <div class="match {% if match.winner_id %}match-completed{% endif %}">
+                                        <div class="players">
+                                            <div class="player {% if match.winner_id == match.student1_id %}winner{% endif %}">
+                                                {{ match.student1_name or "Свободный проход" }}
+                                            </div>
+                                            {% if match.student2_id %}
+                                            <div class="vs">VS</div>
+                                            <div class="player {% if match.winner_id == match.student2_id %}winner{% endif %}">
+                                                {{ match.student2_name }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% if not session.get('is_admin') and match.student1_id and match.student2_id and match.task_id %}
+                                            <a href="{{ url_for('duel_match', duel_id=duel.id, match_id=match.id) }}" 
+                                                class="btn-start-duel">
+                                                    ▶ Начать выполнение задания
+                                            </a>
+                                        {% endif %}
+                                        {% if match.task_id %}
+                                        <div class="task-info">
+                                            Задание: {{ match.task_title }}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <!-- Действия администратора -->
+                                        {% if session.get('is_admin') and duel.status == 'active' %}
+                                        <div class="match-actions">
+                                            {% if not match.winner_id %}
+                                                {% if not match.task_id %}
+                                                <form method="POST" action="{{ url_for('set_duel_match_task', duel_id=duel.id, match_id=match.id) }}">
+                                                    <select name="task_id" required>
+                                                        <option value="">Выберите задание</option>
+                                                        {% for task in all_tasks %}
+                                                        <option value="{{ task.id }}">{{ task.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm">Назначить</button>
+                                                </form>
+                                                {% else %}
+                                                <form method="POST" action="{{ url_for('set_duel_match_winner', duel_id=duel.id, match_id=match.id) }}">
+                                                    <select name="winner_id" required>
+                                                        <option value="">Выберите победителя</option>
+                                                        {% if match.student1_id %}
+                                                        <option value="{{ match.student1_id }}">{{ match.student1_name }}</option>
+                                                        {% endif %}
+                                                        {% if match.student2_id %}
+                                                        <option value="{{ match.student2_id }}">{{ match.student2_name }}</option>
+                                                        {% endif %}
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm">Подтвердить</button>
+                                                </form>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if match.winner_id %}
+                                        <div class="winner-info">
+                                            Победитель: {{ match.student1_name if match.winner_id == match.student1_id else match.student2_name }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-matches">
+                                    Нет матчей в этом раунде
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Таблица лидеров -->
+    <div class="leaderboard">
+        <h2>Таблица лидеров</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Место</th>
+                    <th>Ученик</th>
+                    <th>Очки</th>
+                    <th>Побед</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in participants %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.points }}</td>
+                    <td>
+                        {% set wins = participant.wins or 0 %}
+                        {% for _ in range(wins if wins <= 3 else 3) %}
+                        ★
+                        {% endfor %}
+                        {% if wins > 3 %}+{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Добавление заданий для следующего раунда -->
+    {% if session.get('is_admin') and duel.status == 'active' and duel.current_round > 0 %}
+    <div class="add-tasks-section">
+        <h3>Добавить задания для раунда {{ duel.current_round + 1 }}</h3>
+        <form method="POST" action="{{ url_for('add_tasks_to_round', duel_id=duel.id) }}">
+            <div class="task-checkboxes">
+                {% for task in all_tasks %}
+                <div class="task-checkbox">
+                    <input type="checkbox" name="task_ids" value="{{ task.id }}" id="task_{{ task.id }}">
+                    <label for="task_{{ task.id }}">{{ task.title }}</label>
+                </div>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="round_number" value="{{ duel.current_round + 1 }}">
+            <button type="submit" class="btn btn-add-tasks">Добавить задания</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.duel-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.duel-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.badge-active {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-finished {
+    background-color: #dc3545;
+    color: white;
+}
+
+.current-round {
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.admin-actions {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.bracket-container {
+    margin: 30px 0;
+}
+
+.bracket {
+    display: flex;
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.round {
+    min-width: 300px;
+    margin-right: 30px;
+}
+
+.round h3 {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.matches {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.match {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.match-completed {
+    background: #e8f5e9;
+}
+
+.players {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.player {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.player.winner {
+    background: #c8e6c9;
+    font-weight: bold;
+}
+
+.vs {
+    margin: 0 10px;
+    font-weight: bold;
+    color: #666;
+}
+
+.task-info {
+    font-size: 14px;
+    color: #666;
+    margin: 8px 0;
+    padding: 5px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.match-actions {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+.match-actions select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    margin-right: 5px;
+}
+
+.winner-info {
+    margin-top: 10px;
+    padding: 5px;
+    background: #e8f5e9;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.no-matches {
+    padding: 15px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.leaderboard {
+    margin-top: 40px;
+}
+
+.leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard th, .leaderboard td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.leaderboard th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.leaderboard tr:hover {
+    background-color: #f5f5f5;
+}
+
+.add-tasks-section {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px dashed #ccc;
+}
+
+.task-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.task-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.task-checkbox input {
+    margin-right: 8px;
+}
+
+.btn-add-tasks {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-template {
+    background-color: #9c27b0;
+    color: white;
+    margin-left: 10px;
+}
+
+.btn-template:hover {
+    background-color: #7b1fa2;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .bracket {
+        flex-direction: column;
+    }
+    
+    .round {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}
+</style>
+
+<script>
+function confirmAction(message) {
+    return confirm(message || 'Вы уверены?');
+}
+</script>
+{% endblock %}
+
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\app.py
+================================================================================
+
+
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
+import sqlite3
+from sqlite3 import Error
+import random
+import secrets
+from db import (
+    init_db, 
+    seed_db, 
+    create_connection, 
+    get_task_by_id, 
+    get_all_tasks, 
+    create_task as db_create_task, 
+    update_task, 
+    delete_task,
+    db_create_hint
+)
+from flask import abort
+from flask_session import Session
+import os
+from werkzeug.utils import secure_filename
+import re
+
+app = Flask(__name__)
+app.secret_key = secrets.token_hex(32)
+
+# Конфигурация приложения
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_THRESHOLD'] = 100
+app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 минут
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+Session(app)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Создаем папку для загрузок, если ее нет
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# Инициализация БД при старте
+init_db()
+seed_db()
+
+@app.before_request
+def check_concurrent_users():
+    if request.path.startswith('/student'):
+        if len(session) > 40:
+            abort(503, "Сервер перегружен, попробуйте позже")
+
+@app.route("/logout")
+def logout():
+    session.pop('student_id', None)
+    session.pop('is_admin', None)
+    return redirect(url_for('index'))
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name FROM classes")
+        classes = cursor.fetchall()
+
+        if request.method == "POST":
+            if "student_id" in request.form:
+                session['student_id'] = int(request.form["student_id"])
+                return redirect(url_for("student_lessons", student_id=session['student_id']))
+            elif request.form.get("password") == "12345":
+                session["is_admin"] = True
+                return redirect(url_for("admin_dashboard"))
+            else:
+                flash("Неверный пароль", "error")
+
+        return render_template("index.html", classes=classes)
+    except Error as e:
+        flash("Ошибка базы данных", "error")
+        return render_template("index.html", classes=[])
+    finally:
+        conn.close()
+
+@app.route('/admin')
+def admin_dashboard():
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name FROM classes")
+        classes = cursor.fetchall()
+        return render_template('admin_dashboard.html', classes=classes)
+    except Error as e:
+        flash(f"Ошибка базы данных: {e}", "error")
+        return redirect(url_for('index'))
+    finally:
+        conn.close()
+
+@app.route('/admin/class/<int:class_id>/lessons')
+def class_lessons(class_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Информация о классе
+        cursor.execute("SELECT name FROM classes WHERE id = ?", (class_id,))
+        class_info = cursor.fetchone()
+        if not class_info:
+            flash("Класс не найден", "error")
+            return redirect(url_for('admin_dashboard'))
+        
+        # Получаем обычные уроки
+        cursor.execute("""
+            SELECT id, name, created_at, 'lesson' as type, NULL as status
+            FROM lessons 
+            WHERE class_id = ?
+            ORDER BY created_at DESC
+        """, (class_id,))
+        lessons = cursor.fetchall()
+        
+        # Получаем дуэли
+        cursor.execute("""
+            SELECT id, name, created_at, 'duel' as type, status
+            FROM math_duels
+            WHERE class_id = ?
+            ORDER BY created_at DESC
+        """, (class_id,))
+        duels = cursor.fetchall()
+        
+        # Все задания для выбора
+        cursor.execute("SELECT id, title FROM tasks")
+        all_tasks = cursor.fetchall()
+        
+        # Объединяем уроки и дуэли
+        all_lessons = lessons + duels
+        
+        return render_template('class_lessons.html',
+                           class_id=class_id,
+                           class_name=class_info['name'],
+                           lessons=all_lessons,
+                           all_tasks=all_tasks)
+    except Error as e:
+        flash(f"Ошибка базы данных: {e}", "error")
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        conn.close()
+
+@app.route('/create_lesson', methods=['POST'])
+def create_lesson():
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    class_id = request.form.get('class_id')
+    name = request.form.get('name')
+    task_ids = request.form.getlist('task_ids')
+    
+    if not class_id or not name:
+        flash("Заполните все обязательные поля", "error")
+        return redirect(url_for('class_lessons', class_id=class_id))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO lessons (class_id, name) VALUES (?, ?)",
+            (class_id, name)
+        )
+        lesson_id = cursor.lastrowid
+        
+        for order, task_id in enumerate(task_ids, 1):
+            cursor.execute(
+                "INSERT INTO lesson_tasks (lesson_id, task_id, task_order) VALUES (?, ?, ?)",
+                (lesson_id, int(task_id), order)
+            )
+        
+        conn.commit()
+        flash("Урок успешно создан", "success")
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка при создании урока: {e}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('class_lessons', class_id=class_id))
+
+@app.route('/admin/lessons/<int:lesson_id>/edit', methods=['GET', 'POST'])
+def edit_lesson(lesson_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        if request.method == 'POST':
+            name = request.form.get('name')
+            task_ids = request.form.getlist('task_ids')
+            
+            if not name:
+                flash("Введите название урока", "error")
+                return redirect(url_for('edit_lesson', lesson_id=lesson_id))
+            
+            cursor.execute("UPDATE lessons SET name = ? WHERE id = ?", 
+                         (name, lesson_id))
+            
+            cursor.execute("DELETE FROM lesson_tasks WHERE lesson_id = ?", 
+                         (lesson_id,))
+            
+            for order, task_id in enumerate(task_ids, 1):
+                cursor.execute(
+                    "INSERT INTO lesson_tasks (lesson_id, task_id, task_order) VALUES (?, ?, ?)",
+                    (lesson_id, task_id, order)
+                )
+            
+            conn.commit()
+            flash("Урок успешно обновлен", "success")
+            
+            cursor.execute("SELECT class_id FROM lessons WHERE id = ?", (lesson_id,))
+            class_id = cursor.fetchone()['class_id']
+            return redirect(url_for('class_lessons', class_id=class_id))
+        
+        cursor.execute("SELECT * FROM lessons WHERE id = ?", (lesson_id,))
+        lesson = cursor.fetchone()
+        
+        if not lesson:
+            flash("Урок не найден", "error")
+            return redirect(url_for('admin_dashboard'))
+        
+        cursor.execute("""
+            SELECT t.id, t.title, t.content, lt.task_order
+            FROM tasks t
+            JOIN lesson_tasks lt ON t.id = lt.task_id
+            WHERE lt.lesson_id = ?
+            ORDER BY lt.task_order
+        """, (lesson_id,))
+        lesson_tasks = cursor.fetchall()
+        
+        cursor.execute("SELECT id, title, content FROM tasks")
+        all_tasks = cursor.fetchall()
+        
+        return render_template('edit_lesson.html',
+                           lesson=lesson,
+                           lesson_tasks=lesson_tasks,
+                           all_tasks=all_tasks)
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка базы данных: {e}", "error")
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        conn.close()
+
+@app.route('/admin/lessons/<int:lesson_id>/delete', methods=['POST'])
+def delete_lesson(lesson_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT class_id FROM lessons WHERE id = ?", (lesson_id,))
+        lesson = cursor.fetchone()
+        
+        if not lesson:
+            flash("Урок не найден", "error")
+            return redirect(url_for('admin_dashboard'))
+        
+        class_id = lesson['class_id']
+        
+        cursor.execute("DELETE FROM lesson_tasks WHERE lesson_id = ?", (lesson_id,))
+        cursor.execute("DELETE FROM lessons WHERE id = ?", (lesson_id,))
+        
+        conn.commit()
+        flash("Урок успешно удален", "success")
+        return redirect(url_for('class_lessons', class_id=class_id))
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка при удалении урока: {e}", "error")
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        conn.close()
+
+@app.route('/get_students')
+def get_students():
+    class_id = request.args.get('class_id')
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, name FROM students WHERE class_id = ?", (class_id,))
+        students = [{'id': row[0], 'name': row[1]} for row in cursor.fetchall()]
+        return jsonify({'students': students})
+    except Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route("/student/<int:student_id>/lessons")
+def student_lessons(student_id):
+    if 'student_id' not in session or session['student_id'] != student_id:
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем информацию об ученике
+        cursor.execute("SELECT name, class_id FROM students WHERE id = ?", (student_id,))
+        student = cursor.fetchone()
+        if not student:
+            flash("Ученик не найден", "error")
+            return redirect(url_for("index"))
+        
+        # Получаем обычные уроки
+        cursor.execute("""
+            SELECT id, name, created_at, 'lesson' as type, NULL as status
+            FROM lessons 
+            WHERE class_id = ?
+            ORDER BY created_at DESC
+        """, (student['class_id'],))
+        lessons = cursor.fetchall()
+        
+        # Получаем дуэли для класса
+        cursor.execute("""
+            SELECT id as duel_id, name, created_at, 'duel' as type, status
+            FROM math_duels
+            WHERE class_id = ?
+            ORDER BY created_at DESC
+        """, (student['class_id'],))
+        duels = cursor.fetchall()
+        
+        # Объединяем уроки и дуэли
+        all_lessons = lessons + [
+            {**duel, 'id': duel['duel_id']} for duel in duels
+        ]
+        
+        return render_template("student_lessons.html",
+                            student_id=student_id,
+                            student_name=student['name'],
+                            lessons=all_lessons)
+    except Error as e:
+        flash(f"Ошибка базы данных: {str(e)}", "error")
+        return redirect(url_for("index"))
+    finally:
+        conn.close()
+
+@app.route('/student/<int:student_id>/lesson/<int:lesson_id>')
+def show_student_tasks(student_id, lesson_id):
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM students WHERE id = ?", (student_id,))
+        student = cursor.fetchone()
+        if not student:
+            flash("Ученик не найден", "error")
+            return redirect(url_for('index'))
+        
+        cursor.execute("SELECT name FROM lessons WHERE id = ?", (lesson_id,))
+        lesson = cursor.fetchone()
+        if not lesson:
+            flash("Урок не найден", "error")
+            return redirect(url_for('student_lessons', student_id=student_id))
+        
+        cursor.execute("""
+            SELECT t.id, t.title, t.content, t.answer_formula, 
+                   COALESCE(lt.task_order, 1) as task_order
+            FROM tasks t
+            JOIN lesson_tasks lt ON t.id = lt.task_id
+            WHERE lt.lesson_id = ?
+            ORDER BY COALESCE(lt.task_order, 1)
+        """, (lesson_id,))
+        
+        tasks = []
+        for task in cursor.fetchall():
+            a = random.randint(1, 10)
+            b = random.randint(1, 10)
+            
+            text = task['content'].replace('{A}', str(a)).replace('{B}', str(b))
+            example_answer = eval(task['answer_formula'].replace('{A}', str(a)).replace('{B}', str(b)))
+            
+            tasks.append({
+                'id': task['id'],
+                'text': text,
+                'answer_formula': task['answer_formula'],
+                'example_answer': example_answer,
+                'order': task['task_order']
+            })
+        
+        return render_template('student_tasks.html',
+                            student_id=student_id,
+                            student_name=student[0],
+                            lesson_id=lesson_id,
+                            lesson_name=lesson[0],
+                            tasks=tasks)
+    except Error as e:
+        flash(f"Ошибка базы данных: {e}", "error")
+        return redirect(url_for('student_lessons', student_id=student_id))
+    finally:
+        conn.close()
+
+@app.route('/admin/tasks')
+def admin_tasks():
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    class_group = request.args.get('class_group', type=int)
+    tasks = get_all_tasks(class_group)
+    
+    return render_template('admin_tasks.html', 
+                         tasks=tasks,
+                         active_tab=class_group)
+
+@app.route('/admin/tasks/create', methods=['GET', 'POST'])
+def create_task():
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        try:
+            task_data = {
+                'title': request.form['title'],
+                'content': request.form['content'],
+                'answer_formula': request.form.get('answer_formula', ''),
+                'difficulty': int(request.form.get('difficulty', 2)),
+                'class_group': int(request.form['class_group'])
+            }
+
+            if 'task_file' in request.files:
+                file = request.files['task_file']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    task_data['content'] += f'<br><img src="/static/uploads/{filename}">'
+
+            task_id = db_create_task(**task_data)
+
+            hint_content = request.form.get('hint_content', '')
+            if hint_content:
+                if 'hint_file' in request.files:
+                    file = request.files['hint_file']
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        hint_content += f'<br><img src="/static/uploads/{filename}">'
+                
+                db_create_hint(task_id, hint_content)
+
+            flash('Задание успешно создано!', 'success')
+            return redirect(url_for('admin_tasks'))
+
+        except Exception as e:
+            flash(f'Ошибка: {str(e)}', 'error')
+
+    return render_template('admin_create_task.html')
+
+@app.route('/admin/tasks/<int:task_id>/edit', methods=['GET', 'POST'])
+def edit_task(task_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    task = get_task_by_id(task_id)
+    if not task:
+        flash("Задание не найдено", "error")
+        return redirect(url_for('admin_tasks'))
+    
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        answer_formula = request.form.get('answer_formula')
+        difficulty = request.form.get('difficulty', 2, type=int)
+        class_group = request.form.get('class_group', 5, type=int)
+        
+        if not title or not content:
+            flash("Заполните все обязательные поля", "error")
+            return redirect(url_for('edit_task', task_id=task_id))
+        
+        if update_task(task_id, title, content, answer_formula, difficulty, class_group):
+            flash("Задание успешно обновлено", "success")
+            return redirect(url_for('admin_tasks'))
+        else:
+            flash("Ошибка при обновлении задания", "error")
+    
+    return render_template('admin_create_task.html', task=task)
+
+@app.route('/admin/tasks/<int:task_id>/delete', methods=['POST'])
+def delete_task_route(task_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    if delete_task(task_id):
+        flash("Задание успешно удалено", "success")
+    else:
+        flash("Ошибка при удалении задания", "error")
+    
+    return redirect(url_for('admin_tasks'))
+
+@app.route('/admin/class/<int:class_id>/create_duel', methods=['GET', 'POST'])
+def create_duel(class_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        if not name:
+            flash("Введите название дуэли", "error")
+            return redirect(url_for('create_duel', class_id=class_id))
+
+        conn = create_connection()
+        try:
+            cursor = conn.cursor()
+            
+            # Создаем дуэль
+            cursor.execute(
+                "INSERT INTO math_duels (class_id, name) VALUES (?, ?)",
+                (class_id, name)
+            )
+            duel_id = cursor.lastrowid
+            
+            # Добавляем участников
+            cursor.execute("SELECT id FROM students WHERE class_id = ?", (class_id,))
+            students = [row['id'] for row in cursor.fetchall()]
+            
+            for student_id in students:
+                cursor.execute(
+                    "INSERT INTO duel_participants (duel_id, student_id) VALUES (?, ?)",
+                    (duel_id, student_id)
+                )
+            
+            # Генерируем первый раунд
+            if students:
+                random.shuffle(students)
+                for i in range(0, len(students), 2):
+                    if i+1 < len(students):
+                        cursor.execute(
+                            """INSERT INTO duel_matches 
+                            (duel_id, round_number, bracket_type, student1_id, student2_id) 
+                            VALUES (?, 1, 'upper', ?, ?)""",
+                            (duel_id, students[i], students[i+1])
+                        )
+            
+            conn.commit()
+            task_ids = request.form.getlist('task_ids')
+            for task_id in task_ids:
+                cursor.execute(
+                     "INSERT INTO duel_round_tasks (duel_id, round_number, task_id) VALUES (?, 1, ?)",
+                     (duel_id, task_id)
+                )
+            conn.commit()
+            flash("Дуэль успешно создана!", "success")
+            return redirect(url_for('view_duel', duel_id=duel_id))
+        except Error as e:
+            conn.rollback()
+            flash(f"Ошибка при создании дуэли: {str(e)}", "error")
+        finally:
+            conn.close()
+
+    # GET запрос - показать форму
+    return render_template('create_duel.html', class_id=class_id)
+
+@app.route('/duel/<int:duel_id>')
+def view_duel(duel_id):
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем информацию о дуэли
+        cursor.execute("""
+            SELECT md.*, c.name as class_name 
+            FROM math_duels md
+            JOIN classes c ON md.class_id = c.id
+            WHERE md.id = ?
+        """, (duel_id,))
+        duel = cursor.fetchone()
+
+        # Получаем все матчи
+        cursor.execute("""
+            SELECT dm.*, 
+                   s1.name as student1_name, 
+                   s2.name as student2_name,
+                   t.title as task_title
+            FROM duel_matches dm
+            LEFT JOIN students s1 ON dm.student1_id = s1.id
+            LEFT JOIN students s2 ON dm.student2_id = s2.id
+            LEFT JOIN tasks t ON dm.task_id = t.id
+            WHERE dm.duel_id = ?
+            ORDER BY dm.round_number, dm.bracket_type
+        """, (duel_id,))
+        matches = cursor.fetchall()
+
+        # Получаем участников для таблицы лидеров
+        cursor.execute("""
+            SELECT s.id, s.name, dp.points, 
+                   (SELECT COUNT(*) FROM duel_matches 
+                    WHERE (student1_id = s.id OR student2_id = s.id) 
+                    AND winner_id = s.id) as wins
+            FROM duel_participants dp
+            JOIN students s ON dp.student_id = s.id
+            WHERE dp.duel_id = ?
+            ORDER BY dp.points DESC
+        """, (duel_id,))
+        participants = cursor.fetchall()
+
+        # Получаем все задания для выбора
+        cursor.execute("SELECT id, title FROM tasks")
+        all_tasks = cursor.fetchall()
+
+        return render_template('view_duel.html',
+                            duel=duel,
+                            matches=matches,
+                            participants=participants,
+                            all_tasks=all_tasks)
+
+    except Error as e:
+        flash(f"Ошибка базы данных: {e}", "error")
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        conn.close()
+
+@app.route('/duel/<int:duel_id>/generate_round', methods=['POST'])
+def generate_round(duel_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем текущий раунд
+        cursor.execute("SELECT current_round FROM math_duels WHERE id = ?", (duel_id,))
+        current_round = cursor.fetchone()['current_round']
+        new_round = current_round + 1
+
+        # Для первого раунда
+        if current_round == 0:
+            cursor.execute("""
+                SELECT student_id FROM duel_participants 
+                WHERE duel_id = ?
+                ORDER BY RANDOM()
+            """, (duel_id,))
+            participants = [row['student_id'] for row in cursor.fetchall()]
+            
+            # Формируем пары для верхней сетки
+            for i in range(0, len(participants), 2):
+                if i+1 < len(participants):
+                    cursor.execute("""
+                        INSERT INTO duel_matches 
+                        (duel_id, round_number, bracket_type, student1_id, student2_id)
+                        VALUES (?, ?, 'upper', ?, ?)
+                    """, (duel_id, new_round, participants[i], participants[i+1]))
+        else:
+            # Для последующих раундов
+            
+            # 1. Получаем победителей верхней сетки предыдущего раунда
+            cursor.execute("""
+                SELECT winner_id FROM duel_matches 
+                WHERE duel_id = ? AND round_number = ? AND bracket_type = 'upper'
+            """, (duel_id, current_round))
+            upper_winners = [row['winner_id'] for row in cursor.fetchall()]
+            
+            # 2. Получаем проигравших верхней сетки предыдущего раунда
+            cursor.execute("""
+                SELECT student1_id, student2_id, winner_id 
+                FROM duel_matches 
+                WHERE duel_id = ? AND round_number = ? AND bracket_type = 'upper'
+            """, (duel_id, current_round))
+            upper_losers = []
+            for row in cursor.fetchall():
+                if row['student1_id'] != row['winner_id']:
+                    upper_losers.append(row['student1_id'])
+                else:
+                    upper_losers.append(row['student2_id'])
+            
+            # 3. Получаем победителей нижней сетки предыдущего раунда
+            cursor.execute("""
+                SELECT winner_id FROM duel_matches 
+                WHERE duel_id = ? AND round_number = ? AND bracket_type = 'lower'
+            """, (duel_id, current_round))
+            lower_winners = [row['winner_id'] for row in cursor.fetchall()]
+            
+            # 4. Формируем верхнюю сетку (победители верхней сетки)
+            for i in range(0, len(upper_winners), 2):
+                if i+1 < len(upper_winners):
+                    cursor.execute("""
+                        INSERT INTO duel_matches 
+                        (duel_id, round_number, bracket_type, student1_id, student2_id)
+                        VALUES (?, ?, 'upper', ?, ?)
+                    """, (duel_id, new_round, upper_winners[i], upper_winners[i+1]))
+            
+            # 5. Формируем нижнюю сетку (проигравшие верхней + победители нижней)
+            lower_participants = upper_losers + lower_winners
+            random.shuffle(lower_participants)
+            
+            for i in range(0, len(lower_participants), 2):
+                if i+1 < len(lower_participants):
+                    cursor.execute("""
+                        INSERT INTO duel_matches 
+                        (duel_id, round_number, bracket_type, student1_id, student2_id)
+                        VALUES (?, ?, 'lower', ?, ?)
+                    """, (duel_id, new_round, lower_participants[i], lower_participants[i+1]))
+
+        # Обновляем номер текущего раунда
+        cursor.execute("""
+            UPDATE math_duels 
+            SET current_round = ? 
+            WHERE id = ?
+        """, (new_round, duel_id))
+
+        conn.commit()
+        flash(f"Раунд {new_round} сгенерирован!", "success")
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка при генерации раунда: {str(e)}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+@app.route('/duel/<int:duel_id>/match/<int:match_id>/set_task', methods=['POST'])
+def set_duel_match_task(duel_id, match_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+
+    task_id = request.form.get('task_id')
+    if not task_id:
+        flash("Выберите задание", "error")
+        return redirect(url_for('view_duel', duel_id=duel_id))
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE duel_matches 
+            SET task_id = ? 
+            WHERE id = ?
+        """, (task_id, match_id))
+        conn.commit()
+        flash("Задание добавлено к матчу", "success")
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка: {e}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+@app.route('/duel/<int:duel_id>/match/<int:match_id>/set_winner', methods=['POST'])
+def set_duel_match_winner(duel_id, match_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+
+    winner_id = request.form.get('winner_id')
+    if not winner_id:
+        flash("Выберите победителя", "error")
+        return redirect(url_for('view_duel', duel_id=duel_id))
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Обновляем матч
+        cursor.execute("""
+            UPDATE duel_matches 
+            SET winner_id = ? 
+            WHERE id = ?
+        """, (winner_id, match_id))
+
+        # Добавляем очки победителю
+        cursor.execute("""
+            UPDATE duel_participants 
+            SET points = points + 3 
+            WHERE duel_id = ? AND student_id = ?
+        """, (duel_id, winner_id))
+
+        conn.commit()
+        flash("Победитель сохранен", "success")
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка: {e}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+@app.route('/duel/<int:duel_id>/finish', methods=['POST'])
+def finish_duel(duel_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Определяем финалистов
+        cursor.execute("""
+            SELECT winner_id FROM duel_matches 
+            WHERE duel_id = ? AND bracket_type = 'upper'
+            ORDER BY round_number DESC LIMIT 1
+        """, (duel_id,))
+        finalist1 = cursor.fetchone()
+        
+        cursor.execute("""
+            SELECT winner_id FROM duel_matches 
+            WHERE duel_id = ? AND bracket_type = 'lower'
+            ORDER BY round_number DESC LIMIT 1
+        """, (duel_id,))
+        finalist2 = cursor.fetchone()
+        
+        if finalist1 and finalist2:
+            # Создаем финальный матч
+            cursor.execute("""
+                INSERT INTO duel_matches 
+                (duel_id, round_number, bracket_type, student1_id, student2_id)
+                VALUES (?, ?, 'final', ?, ?)
+            """, (duel_id, 999, finalist1['winner_id'], finalist2['winner_id']))
+        
+        # Помечаем дуэль как завершенную
+        cursor.execute("""
+            UPDATE math_duels 
+            SET status = 'finished' 
+            WHERE id = ?
+        """, (duel_id,))
+        
+        conn.commit()
+        flash("Дуэль завершена!", "success")
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка: {e}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+@app.route('/admin/duels/<int:duel_id>/delete', methods=['POST'])
+def delete_duel(duel_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем class_id перед удалением для редиректа
+        cursor.execute("SELECT class_id FROM math_duels WHERE id = ?", (duel_id,))
+        class_id = cursor.fetchone()['class_id']
+        
+        # Удаляем связанные записи
+        cursor.execute("DELETE FROM duel_matches WHERE duel_id = ?", (duel_id,))
+        cursor.execute("DELETE FROM duel_participants WHERE duel_id = ?", (duel_id,))
+        cursor.execute("DELETE FROM math_duels WHERE id = ?", (duel_id,))
+        
+        conn.commit()
+        flash("Дуэль успешно удалена", "success")
+    except Error as e:
+        conn.rollback()
+        flash(f"Ошибка при удалении дуэли: {e}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('class_lessons', class_id=class_id))
+
+
+@app.route('/duel/<int:duel_id>/round/<int:round_number>')
+def duel_round(duel_id, round_number):
+    if 'student_id' not in session:
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    cursor = conn.cursor()
+    
+    # Получаем матч ученика
+    cursor.execute("""
+        SELECT * FROM duel_matches 
+        WHERE duel_id = ? AND round_number = ? 
+        AND (student1_id = ? OR student2_id = ?)
+    """, (duel_id, round_number, session['student_id'], session['student_id']))
+    match = cursor.fetchone()
+    
+    # Получаем противника
+    opponent_id = match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id']
+    cursor.execute("SELECT name FROM students WHERE id = ?", (opponent_id,))
+    opponent = cursor.fetchone()['name']
+    
+    # Получаем задания для раунда
+    cursor.execute("""
+        SELECT t.* FROM tasks t
+        JOIN duel_round_tasks drt ON t.id = drt.task_id
+        WHERE drt.duel_id = ? AND drt.round_number = ?
+    """, (duel_id, round_number))
+    tasks = cursor.fetchall()
+    
+    return render_template(
+        'duel_round.html',
+        duel_id=duel_id,
+        round_number=round_number,
+        opponent=opponent,
+        tasks=tasks
+    )
+
+
+@app.route('/duel/<int:duel_id>/add_tasks', methods=['POST'])
+def add_tasks_to_round(duel_id):
+    if not session.get('is_admin'):
+        abort(403)
+    
+    round_number = request.form.get('round_number')
+    task_ids = request.form.getlist('task_ids')
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        for task_id in task_ids:
+            cursor.execute(
+                "INSERT INTO duel_round_tasks (duel_id, round_number, task_id) VALUES (?, ?, ?)",
+                (duel_id, round_number, task_id)
+            )
+        conn.commit()
+        flash("Задания успешно добавлены для раунда!", "success")
+    except Exception as e:
+        conn.rollback()
+        flash(f"Ошибка: {str(e)}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+@app.route('/duel/<int:duel_id>/generate_first_round', methods=['POST'])
+def generate_first_round(duel_id):
+    if not session.get('is_admin'):
+        abort(403)
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # 1. Получаем всех участников дуэли
+        cursor.execute("""
+            SELECT student_id FROM duel_participants 
+            WHERE duel_id = ?
+            ORDER BY RANDOM()
+        """, (duel_id,))
+        participants = [row['student_id'] for row in cursor.fetchall()]
+        
+        if len(participants) < 2:
+            flash("Для формирования пар нужно минимум 2 участника", "error")
+            return redirect(url_for('view_duel', duel_id=duel_id))
+        
+        # 2. Формируем пары для первого раунда
+        for i in range(0, len(participants), 2):
+            if i+1 < len(participants):
+                cursor.execute("""
+                    INSERT INTO duel_matches 
+                    (duel_id, round_number, bracket_type, student1_id, student2_id) 
+                    VALUES (?, 1, 'upper', ?, ?)
+                """, (duel_id, participants[i], participants[i+1]))
+            else:
+                # Если нечетное количество, один ученик проходит автоматически
+                cursor.execute("""
+                    INSERT INTO duel_matches 
+                    (duel_id, round_number, bracket_type, student1_id, winner_id) 
+                    VALUES (?, 1, 'upper', ?, ?)
+                """, (duel_id, participants[i], participants[i]))
+        
+        # 3. Обновляем текущий раунд
+        cursor.execute("""
+            UPDATE math_duels 
+            SET current_round = 1 
+            WHERE id = ?
+        """, (duel_id,))
+        
+        conn.commit()
+        flash("Пары для первого раунда успешно сформированы!", "success")
+    except Exception as e:
+        conn.rollback()
+        flash(f"Ошибка при формировании пар: {str(e)}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+
+@app.route('/duel/<int:duel_id>/match/<int:match_id>')
+def duel_match(duel_id, match_id):
+    if 'student_id' not in session:
+        return redirect(url_for('index'))
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Проверяем, относится ли ученик к этому матчу
+        cursor.execute("""
+            SELECT * FROM duel_matches
+            WHERE id = ? AND (student1_id = ? OR student2_id = ?)
+        """, (match_id, session['student_id'], session['student_id']))
+        match = cursor.fetchone()
+        
+        if not match:
+            flash("Вы не участвуете в этом матче", "error")
+            return redirect(url_for('student_lessons', student_id=session['student_id']))
+        
+        # Получаем задание
+        cursor.execute("SELECT * FROM tasks WHERE id = ?", (match['task_id'],))
+        task = cursor.fetchone()
+        
+        if not task:
+            flash("Задание для этого матча еще не назначено", "error")
+            return redirect(url_for('student_lessons', student_id=session['student_id']))
+        
+        # Получаем имя противника
+        opponent_id = match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id']
+        cursor.execute("SELECT name FROM students WHERE id = ?", (opponent_id,))
+        opponent = cursor.fetchone()['name']
+        
+        return render_template('duel_match.html',
+                            duel_id=duel_id,
+                            match_id=match_id,
+                            task=task,
+                            opponent=opponent)
+    
+    except Error as e:
+        flash(f"Ошибка базы данных: {e}", "error")
+        return redirect(url_for('index'))
+    finally:
+        conn.close()
+
+@app.route('/duel/<int:duel_id>/match/<int:match_id>/submit', methods=['POST'])
+def submit_duel_answer_handler(duel_id, match_id):
+    if 'student_id' not in session:
+        return redirect(url_for('index'))
+
+    answer = request.form.get('answer')
+    if not answer:
+        flash("Введите ответ", "error")
+        return redirect(url_for('duel_match', duel_id=duel_id, match_id=match_id))
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем задание и правильный ответ
+        cursor.execute("""
+            SELECT t.answer_formula FROM tasks t
+            JOIN duel_matches dm ON t.id = dm.task_id
+            WHERE dm.id = ?
+        """, (match_id,))
+        task = cursor.fetchone()
+        
+        if not task:
+            flash("Задание не найдено", "error")
+            return redirect(url_for('student_lessons', student_id=session['student_id']))
+        
+        # Проверяем ответ (простая проверка для примера)
+        correct_answer = str(eval(task['answer_formula']))
+        is_correct = answer.strip() == correct_answer
+        
+        # Сохраняем результат
+        cursor.execute("""
+            INSERT INTO duel_answers 
+            (duel_id, match_id, student_id, answer, is_correct)
+            VALUES (?, ?, ?, ?, ?)
+        """, (duel_id, match_id, session['student_id'], answer, is_correct))
+        
+        conn.commit()
+        
+        if is_correct:
+            flash("Правильно! Ответ засчитан", "success")
+        else:
+            flash(f"Неправильно. Правильный ответ: {correct_answer}", "error")
+            
+    except Exception as e:
+        conn.rollback()
+        flash(f"Ошибка при проверке ответа: {str(e)}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('duel_match', duel_id=duel_id, match_id=match_id))
+
+
+# Добавление шаблонов заданий
+@app.route('/duel/<int:duel_id>/add_templates/<int:round_number>', methods=['GET', 'POST'])
+def add_duel_templates(duel_id, round_number):
+    if not session.get('is_admin'):
+        abort(403)
+    
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM math_duels WHERE id = ?", (duel_id,))
+    duel = cursor.fetchone()
+    
+    if request.method == 'POST':
+        templates = request.form.getlist('templates[]')
+        answer_formulas = request.form.getlist('answer_formulas[]')
+        
+        try:
+            # Удаляем старые шаблоны для этого раунда
+            cursor.execute("DELETE FROM duel_task_templates WHERE duel_id = ? AND round_number = ?", 
+                         (duel_id, round_number))
+            
+            # Сохраняем новые шаблоны
+            for template, formula in zip(templates, answer_formulas):
+                cursor.execute("""
+                    INSERT INTO duel_task_templates (duel_id, round_number, template, answer_formula)
+                    VALUES (?, ?, ?, ?)
+                """, (duel_id, round_number, template, formula))
+            
+            # Генерируем задания для всех матчей раунда
+            generate_tasks_for_round(duel_id, round_number)
+            
+            conn.commit()
+            flash("Шаблоны заданий успешно сохранены и применены", "success")
+            return redirect(url_for('view_duel', duel_id=duel_id))
+        except Exception as e:
+            conn.rollback()
+            flash(f"Ошибка: {str(e)}", "error")
+    
+    return render_template('add_duel_tasks.html', duel=duel, round_number=round_number)
+
+# Генерация заданий для всех матчей раунда
+def generate_tasks_for_round(duel_id, round_number, match_id=None):
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем шаблоны
+        cursor.execute("""
+            SELECT template, answer_formula 
+            FROM duel_templates 
+            WHERE duel_id = ? AND round_number = ?
+        """, (duel_id, round_number))
+        templates = cursor.fetchall()
+
+        if not templates:
+            raise ValueError(f"No templates found for duel {duel_id}, round {round_number}")
+
+        # Получаем матчи для обработки
+        query = """
+            SELECT id FROM duel_matches 
+            WHERE duel_id = ? AND round_number = ?
+        """ if not match_id else "SELECT id FROM duel_matches WHERE id = ?"
+        params = (duel_id, round_number) if not match_id else (match_id,)
+        
+        cursor.execute(query, params)
+        matches = cursor.fetchall()
+
+        for match in matches:
+            tasks = []
+            answers = []
+            
+            for template in templates:
+                # Извлекаем параметры из шаблона
+                params = {}
+                for param in re.findall(r'\{([A-Z]+)\}', template['template']):
+                    params[param] = random.randint(1, 10)
+                
+                # Генерируем задание
+                task_text = template['template']
+                for param, value in params.items():
+                    task_text = task_text.replace(f'{{{param}}}', str(value))
+                
+                # Безопасное вычисление ответа
+                try:
+                    # Подготавливаем формулу (удаляем фигурные скобки)
+                    formula = template['answer_formula']
+                    for p in params:
+                        formula = formula.replace(f'{{{p}}}', str(params[p]))
+                    
+                    # Проверяем на безопасные только математические операции
+                    if not all(c in ' 0123456789+-*/().' for c in formula):
+                        raise ValueError("Формула содержит недопустимые символы")
+                    
+                    answer = str(eval(formula))
+                except Exception as e:
+                    raise ValueError(f"Ошибка в формуле '{template['answer_formula']}': {str(e)}")
+                
+                tasks.append(task_text)
+                answers.append(answer)
+
+            cursor.execute("""
+                UPDATE duel_matches 
+                SET generated_task = ?, correct_answer = ?
+                WHERE id = ?
+            """, ('\n'.join(tasks), '\n'.join(answers), match['id']))
+        
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+
+# Маршрут для выполнения задания учеником
+@app.route('/duel/<int:duel_id>/match/<int:match_id>/view')  # Добавили /view в URL
+def view_duel_match(duel_id, match_id):
+    if 'student_id' not in session:
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Проверяем доступ ученика к матчу
+        cursor.execute("""
+            SELECT dm.*, s1.name as student1_name, s2.name as student2_name,
+                   md.name as duel_name, md.current_round
+            FROM duel_matches dm
+            JOIN math_duels md ON dm.duel_id = md.id
+            LEFT JOIN students s1 ON dm.student1_id = s1.id
+            LEFT JOIN students s2 ON dm.student2_id = s2.id
+            WHERE dm.id = ? AND (dm.student1_id = ? OR dm.student2_id = ?)
+        """, (match_id, session['student_id'], session['student_id']))
+        match = cursor.fetchone()
+        
+        if not match:
+            flash("Вы не участвуете в этом матче", "error")
+            return redirect(url_for('student_lessons', student_id=session['student_id']))
+        
+        # Получаем противника
+        opponent_id = match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id']
+        cursor.execute("SELECT name FROM students WHERE id = ?", (opponent_id,))
+        opponent = cursor.fetchone()['name']
+        
+        # Разбиваем задания на список
+        tasks = match['generated_task'].split('\n') if match['generated_task'] else []
+        answers = match['correct_answer'].split('\n') if match['correct_answer'] else []
+        
+        return render_template('duel_match.html',
+                            duel_id=duel_id,
+                            match_id=match_id,
+                            duel_name=match['duel_name'],
+                            round_number=match['current_round'],
+                            opponent=opponent,
+                            tasks=zip(tasks, answers),
+                            student_id=session['student_id'])
+    
+    except Exception as e:
+        flash(f"Ошибка: {str(e)}", "error")
+        return redirect(url_for('index'))
+    finally:
+        conn.close()
+
+
+@app.route('/submit_duel_answers', methods=['POST'])
+def submit_duel_answers():
+    if 'student_id' not in session:
+        return redirect(url_for('index'))
+
+    # Для отладки
+    print("Полученные данные:", request.form)
+    
+    # Получаем данные по НОВОМУ формату
+    duel_id = request.form.get('duel_id')
+    match_id = request.form.get('match_id')
+    user_answer = request.form.get('answer')          # Теперь просто 'answer'
+    correct_answer = request.form.get('correct_answer') # И 'correct_answer'
+    
+    # Проверка наличия всех данных
+    if not all([duel_id, match_id, user_answer, correct_answer]):
+        flash("Ошибка: сервер не получил все необходимые данные", "error")
+        return redirect(url_for('student_duel_view', duel_id=duel_id))
+    
+    # Проверка ответа
+    try:
+        is_correct = float(user_answer) == float(correct_answer)
+    except ValueError:
+        is_correct = False
+    
+    # Обновление БД
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        if is_correct:
+            cursor.execute("""
+                UPDATE duel_matches 
+                SET winner_id = ?
+                WHERE id = ? AND duel_id = ?
+            """, (session['student_id'], match_id, duel_id))
+            
+            cursor.execute("""
+                UPDATE duel_participants
+                SET points = points + 1
+                WHERE duel_id = ? AND student_id = ?
+            """, (duel_id, session['student_id']))
+            
+            flash("✅ Ответ правильный! +1 балл", "success")
+        else:
+            flash(f"❌ Неверно. Правильный ответ: {correct_answer}", "error")
+            
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        flash(f"Ошибка базы данных: {str(e)}", "error")
+    finally:
+        conn.close()
+
+    return redirect(url_for('student_duel_view', duel_id=duel_id))
+
+@app.route('/duel/<int:duel_id>/create_templates/<int:round_number>', methods=['GET', 'POST'])
+def create_round_templates(duel_id, round_number):
+    if not session.get('is_admin'):
+        abort(403)
+    
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM math_duels WHERE id = ?", (duel_id,))
+    duel = cursor.fetchone()
+    
+    if request.method == 'POST':
+        templates = request.form.getlist('templates[]')
+        answer_formulas = request.form.getlist('answer_formulas[]')
+        
+        try:
+            # Удаляем старые шаблоны для этого раунда
+            cursor.execute("DELETE FROM duel_templates WHERE duel_id = ? AND round_number = ?", 
+                         (duel_id, round_number))
+            
+            # Сохраняем новые шаблоны
+            for template, formula in zip(templates, answer_formulas):
+                cursor.execute("""
+                    INSERT INTO duel_templates (duel_id, round_number, template, answer_formula)
+                    VALUES (?, ?, ?, ?)
+                """, (duel_id, round_number, template, formula))
+            
+            conn.commit()
+            flash("Шаблоны заданий успешно сохранены!", "success")
+            return redirect(url_for('view_duel', duel_id=duel_id))
+        except Exception as e:
+            conn.rollback()
+            flash(f"Ошибка: {str(e)}", "error")
+        finally:
+            conn.close()
+    
+    return render_template('add_duel_tasks.html', 
+                         duel=duel,
+                         duel_id=duel_id,
+                         round_number=round_number)
+
+
+
+@app.route('/duel/<int:duel_id>/generate_tasks', methods=['POST'])
+def generate_tasks(duel_id):
+    if not session.get('is_admin'):
+        abort(403)
+    
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT current_round FROM math_duels WHERE id = ?", (duel_id,))
+        round_number = cursor.fetchone()['current_round']
+        
+        generate_tasks_for_round(duel_id, round_number)
+        flash("Задания успешно сгенерированы для всех пар раунда!", "success")
+    except Exception as e:
+        flash(f"Ошибка: {str(e)}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+@app.route('/duel/<int:duel_id>/apply_templates', methods=['POST'])
+def apply_templates_to_round(duel_id):
+    if not session.get('is_admin'):
+        abort(403)
+    
+    conn = None
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        
+        # Получаем текущий раунд
+        cursor.execute("SELECT current_round FROM math_duels WHERE id = ?", (duel_id,))
+        current_round = cursor.fetchone()['current_round']
+        print(f"Текущий раунд: {current_round}")
+        
+        # Получаем шаблоны для этого раунда
+        cursor.execute("""
+            SELECT template, answer_formula 
+            FROM duel_templates 
+            WHERE duel_id = ? AND round_number = ?
+        """, (duel_id, current_round))
+        templates = cursor.fetchall()
+        
+        if not templates:
+            flash("Нет шаблонов заданий для этого раунда", "error")
+            return redirect(url_for('view_duel', duel_id=duel_id))
+        
+        # Получаем все матчи текущего раунда
+        cursor.execute("""
+            SELECT id FROM duel_matches 
+            WHERE duel_id = ? AND round_number = ?
+        """, (duel_id, current_round))
+        matches = cursor.fetchall()
+        
+        # Для каждого матча генерируем задания из шаблонов
+        for match in matches:
+            tasks = []
+            answers = []
+            
+            for template in templates:
+                # Генерируем уникальные параметры
+                params = {}
+                for param in re.findall(r'\{([A-Z]+)\}', template['template']):
+                    params[param] = random.randint(1, 10)
+                
+                # Подставляем параметры
+                task_text = template['template']
+                for param, value in params.items():
+                    task_text = task_text.replace(f'{{{param}}}', str(value))
+                
+                # Вычисляем ответ (с обработкой ошибок)
+                try:
+                    # Подготавливаем формулу
+                    formula = template['answer_formula']
+                    for p in params:
+                        formula = formula.replace(f'{{{p}}}', str(params[p]))
+                    
+                    answer = str(eval(formula))
+                except Exception as e:
+                    flash(f"Ошибка в формуле '{template['answer_formula']}': {str(e)}", "error")
+                    continue
+                
+                tasks.append(task_text)
+                answers.append(answer)
+            
+            # Обновляем матч
+            cursor.execute("""
+                UPDATE duel_matches 
+                SET generated_task = ?, correct_answer = ?
+                WHERE id = ?
+            """, ('\n'.join(tasks), '\n'.join(answers), match['id']))
+        
+        # Проверка результатов
+        cursor.execute("""
+            SELECT id, generated_task, correct_answer 
+            FROM duel_matches 
+            WHERE duel_id = ? AND round_number = ?
+        """, (duel_id, current_round))
+        
+        print("Проверка заданий после генерации:")
+        for row in cursor.fetchall():
+            print(f"Матч {row['id']}: Задание - {row['generated_task']}, Ответ - {row['correct_answer']}")
+        
+        conn.commit()
+        flash("Шаблонные задания успешно применены ко всем парам раунда!", "success")
+        return redirect(url_for('view_duel', duel_id=duel_id))
+        
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(f"Ошибка: {str(e)}")
+        flash(f"Ошибка при применении шаблонов: {str(e)}", "error")
+        return redirect(url_for('view_duel', duel_id=duel_id))
+    finally:
+        if conn:
+            conn.close()
+    
+
+@app.route('/duel/<int:duel_id>/select_round', methods=['GET', 'POST'])
+def select_round_for_templates(duel_id):
+    if not session.get('is_admin'):
+        abort(403)
+    
+    if request.method == 'POST':
+        round_number = request.form.get('round_number')
+        return redirect(url_for('create_round_templates', 
+                             duel_id=duel_id, 
+                             round_number=round_number))
+    
+    # GET запрос - показать форму выбора раунда
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT current_round FROM math_duels WHERE id = ?", (duel_id,))
+    current_round = cursor.fetchone()['current_round']
+    conn.close()
+    
+    return render_template('select_round.html',
+                         duel_id=duel_id,
+                         current_round=current_round)
+
+
+@app.route('/student_duel/<int:duel_id>')
+def student_duel_view(duel_id):
+    if 'student_id' not in session:
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем информацию о дуэли
+        cursor.execute("SELECT id, name, current_round FROM math_duels WHERE id = ?", (duel_id,))
+        duel = dict(cursor.fetchone() or {})
+        
+        # Получаем текущего ученика
+        cursor.execute("SELECT id, name FROM students WHERE id = ?", (session['student_id'],))
+        current_student = dict(cursor.fetchone() or {})
+        
+        # Получаем текущий матч
+        cursor.execute("""
+            SELECT dm.*, s1.name as student1_name, s2.name as student2_name 
+            FROM duel_matches dm
+            LEFT JOIN students s1 ON dm.student1_id = s1.id
+            LEFT JOIN students s2 ON dm.student2_id = s2.id
+            WHERE dm.duel_id = ? AND (dm.student1_id = ? OR dm.student2_id = ?)
+            ORDER BY dm.round_number DESC LIMIT 1
+        """, (duel_id, session['student_id'], session['student_id']))
+        match = dict(cursor.fetchone() or {})
+        
+        if not match:
+            flash("У вас нет активных матчей", "warning")
+            return redirect(url_for('student_lessons', student_id=session['student_id']))
+        
+        # Определяем противника
+        opponent = {
+            'id': match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id'],
+            'name': match['student1_name'] if match['student1_id'] != session['student_id'] else match['student2_name']
+        }
+        
+        # Получаем задания
+        tasks = []
+        if 'generated_task' in match and match['generated_task']:
+            task_texts = match['generated_task'].split('\n')
+            answers = match.get('correct_answer', '').split('\n')
+            tasks = [{'text': text, 'answer': answers[i] if i < len(answers) else ''} 
+                    for i, text in enumerate(task_texts)]
+        
+        return render_template('student_duel.html',
+                            duel=duel,
+                            match=match,
+                            current_student=current_student,
+                            opponent=opponent,
+                            tasks=tasks)
+    
+    except Exception as e:
+        flash(f"Ошибка: {str(e)}", "error")
+        return redirect(url_for('index'))
+    finally:
+        conn.close()
+
+
+if __name__ == "__main__":
+    from waitress import serve
+    serve(
+        app,
+        host='0.0.0.0',
+        port=5000,
+        threads=50
+    )
+
+
+================================================================================
+Файл: C:\Users\yatma\Desktop\Платформа. Версия 2\db.py
+================================================================================
+
+
+import sqlite3
+from sqlite3 import Error
+
+
+def create_connection(db_file="database.db"):
+    """Создает подключение с таймаутом для избежания deadlock"""
+    conn = None
+    try:
+        conn = sqlite3.connect(
+            db_file,
+            timeout=30,  # 30 секунд ожидания при блокировке
+            check_same_thread=False  # Для многопоточной работы
+        )
+        conn.row_factory = sqlite3.Row
+        # Включаем WAL-режим для лучшей параллельной работы
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA synchronous=NORMAL")
+        return conn
+    except Error as e:
+        app.logger.error(f"Ошибка подключения: {e}")
+        return None
+
+def init_db():
+    """Инициализация БД с новой структурой"""
+    tables = [
+        """
+        CREATE TABLE IF NOT EXISTS classes (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL UNIQUE
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS students (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            class_id INTEGER,
+            FOREIGN KEY (class_id) REFERENCES classes (id)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            answer_formula TEXT,
+            difficulty INTEGER DEFAULT 2,
+            class_group INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS lessons (
+            id INTEGER PRIMARY KEY,
+            class_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (class_id) REFERENCES classes (id)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS lesson_tasks (
+            lesson_id INTEGER,
+            task_id INTEGER,
+            task_order INTEGER NOT NULL DEFAULT 1,
+            FOREIGN KEY (lesson_id) REFERENCES lessons (id),
+            FOREIGN KEY (task_id) REFERENCES tasks (id),
+            PRIMARY KEY (lesson_id, task_id)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS hints (
+            id INTEGER PRIMARY KEY,
+            task_id INTEGER NOT NULL,
+            content TEXT NOT NULL,
+            is_ai_generated BOOLEAN DEFAULT 0,
+            FOREIGN KEY (task_id) REFERENCES tasks (id)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS math_duels (
+            id INTEGER PRIMARY KEY,
+            class_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            current_round INTEGER DEFAULT 1,
+            status TEXT DEFAULT 'active',
+            FOREIGN KEY (class_id) REFERENCES classes (id)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS duel_participants (
+            duel_id INTEGER NOT NULL,
+            student_id INTEGER NOT NULL,
+            points INTEGER DEFAULT 0,
+            position INTEGER DEFAULT 0,
+            FOREIGN KEY (duel_id) REFERENCES math_duels (id),
+            FOREIGN KEY (student_id) REFERENCES students (id),
+            PRIMARY KEY (duel_id, student_id)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS duel_matches (
+    id INTEGER PRIMARY KEY,
+    duel_id INTEGER NOT NULL,
+    round_number INTEGER NOT NULL,
+    bracket_type TEXT NOT NULL CHECK(bracket_type IN ('upper', 'lower', 'final')),
+    student1_id INTEGER,
+    student2_id INTEGER,
+    task_id INTEGER,
+    winner_id INTEGER,
+    generated_task TEXT,          -- Добавлено для хранения сгенерированных заданий
+    correct_answer TEXT,          -- Добавлено для хранения правильных ответов
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (duel_id) REFERENCES math_duels(id),
+    FOREIGN KEY (student1_id) REFERENCES students(id),
+    FOREIGN KEY (student2_id) REFERENCES students(id),
+    FOREIGN KEY (task_id) REFERENCES tasks(id),
+    FOREIGN KEY (winner_id) REFERENCES students(id),
+    CHECK (
+        (student1_id IS NOT NULL OR student2_id IS NOT NULL) AND
+        (winner_id IS NULL OR winner_id IN (student1_id, student2_id))
+)
+        )
+        """,
+        """
+CREATE TABLE IF NOT EXISTS duel_round_tasks (
+    duel_id INTEGER NOT NULL,
+    round_number INTEGER NOT NULL,
+    task_id INTEGER NOT NULL,
+    FOREIGN KEY (duel_id) REFERENCES math_duels(id),
+    FOREIGN KEY (task_id) REFERENCES tasks(id),
+    PRIMARY KEY (duel_id, round_number, task_id)
+)
+""",
+"""
+CREATE TABLE IF NOT EXISTS duel_answers (
+    id INTEGER PRIMARY KEY,
+    duel_id INTEGER NOT NULL,
+    match_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    answer TEXT NOT NULL,
+    is_correct BOOLEAN NOT NULL,
+    answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (duel_id) REFERENCES math_duels(id),
+    FOREIGN KEY (match_id) REFERENCES duel_matches(id),
+    FOREIGN KEY (student_id) REFERENCES students(id)
+)
+""",
+"""
+CREATE TABLE IF NOT EXISTS duel_task_templates (
+    id INTEGER PRIMARY KEY,
+    duel_id INTEGER NOT NULL,
+    round_number INTEGER NOT NULL,
+    template TEXT NOT NULL,
+    answer_formula TEXT NOT NULL,
+    FOREIGN KEY (duel_id) REFERENCES math_duels(id)
+)
+""",
+"""
+CREATE TABLE IF NOT EXISTS duel_templates (
+    id INTEGER PRIMARY KEY,
+    duel_id INTEGER NOT NULL,
+    round_number INTEGER NOT NULL,
+    template TEXT NOT NULL,
+    answer_formula TEXT NOT NULL,
+    FOREIGN KEY (duel_id) REFERENCES math_duels(id)
+)
+"""
+    ]
+    
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            # Удаляем старые таблицы (если нужно)
+            cursor.execute("DROP TABLE IF EXISTS old_tasks")
+            
+            for table in tables:
+                cursor.execute(table)
+            conn.commit()
+        except Error as e:
+            print(f"Ошибка при создании таблиц: {e}")
+        finally:
+            conn.close()
+
+def seed_db():
+    """Заполнение тестовыми данными с проверкой существования"""
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Проверяем, есть ли уже тестовые данные
+        cursor.execute("SELECT COUNT(*) FROM classes")
+        if cursor.fetchone()[0] > 0:
+            return  # Данные уже есть, пропускаем заполнение
+        
+        # Создаем классы
+        classes = [
+            ("5А",), ("5Б",), ("5В",),
+            ("6А",), ("6Б",), ("6В",),
+            ("7А",), ("7Б",), ("7В",),
+            ("8А",), ("8Б",), ("8В",),
+            ("9А",), ("9Б",), ("9В",),
+            ("10А",), ("10Б",), ("10В",),
+            ("11А",), ("11Б",), ("11В",)
+        ]
+        
+        for class_name in classes:
+            cursor.execute("INSERT INTO classes (name) VALUES (?)", class_name)
+        
+        # Добавляем учеников 6В класса
+        class_6v_id = 6  # Предполагаем, что 6В имеет id=6
+        students_6v = [
+            ("Александров Артём А.", class_6v_id),
+            ("Андреева Ольга", class_6v_id),
+            ("Белов Михаил", class_6v_id),
+            ("Васильев Максим А.", class_6v_id),
+            ("Васильева Виктория", class_6v_id),
+            ("Васильева Кира", class_6v_id),
+            ("Васильева Мария П.", class_6v_id),
+            ("Григорьев Артем", class_6v_id),
+            ("Григорьев Максим В.", class_6v_id),
+            ("Григорьева Елена", class_6v_id),
+            ("Гунин Арсений", class_6v_id),
+            ("Евграфов Олег", class_6v_id),
+            ("Ефимов Захар", class_6v_id),
+            ("Запольская Ульяна", class_6v_id),
+            ("Исаев Роман", class_6v_id),
+            ("Калашников Александр", class_6v_id),
+            ("Калугин Иван", class_6v_id),
+            ("Карпов Георгий", class_6v_id),
+            ("Крылова Дарья А.", class_6v_id),
+            ("Лапшинов Дмитрий", class_6v_id),
+            ("Лемесова Светлана", class_6v_id),
+            ("Мазин Михаил", class_6v_id),
+            ("Михайлова Александра", class_6v_id),
+            ("Никина Нина", class_6v_id),
+            ("Никитин Демид В.", class_6v_id),
+            ("Никифоров Евгений", class_6v_id),
+            ("Николаев Матвей", class_6v_id),
+            ("Павлов Арсений М.", class_6v_id),
+            ("Пристромко Артем", class_6v_id),
+            ("Прокопьев Андрей Н.", class_6v_id),
+            ("Самуков Никита", class_6v_id),
+            ("Сельцов Амир-Хан", class_6v_id),
+            ("Суркова Юлиана", class_6v_id),
+            ("Тупикова Дарья", class_6v_id),
+            ("Федоров Денис", class_6v_id),
+            ("Филимонова Валерия", class_6v_id),
+            ("Хрисанова Ксения", class_6v_id)
+        ]
+        
+        for student in students_6v:
+            cursor.execute(
+                "INSERT INTO students (name, class_id) VALUES (?, ?)",
+                student
+            )
+        
+        # Добавляем тестовые задания
+        test_tasks = [
+            ("Уравнение", "Решите: x + {A} = {B}", "{B} - {A}", 1, 6),
+            ("Площадь", "Найдите площадь прямоугольника со сторонами {A} и {B}", "{A} * {B}", 2, 6),
+            ("Проценты", "Сколько будет {A}% от числа {B}?", "{B} * {A} / 100", 2, 6),
+            ("Степени", "Вычислите: {A}² + {B}²", "{A}**2 + {B}**2", 3, 6),
+            ("Дроби", "Сложите дроби: {A}/{B} + {C}/{D}", "({A}*{D} + {C}*{B})/({B}*{D})", 3, 6)
+        ]
+        
+        for title, content, answer, difficulty, class_group in test_tasks:
+            cursor.execute("""
+                INSERT INTO tasks 
+                (title, content, answer_formula, difficulty, class_group) 
+                VALUES (?, ?, ?, ?, ?)
+            """, (title, content, answer, difficulty, class_group))
+        
+        conn.commit()
+    except Error as e:
+        print(f"Ошибка при заполнении тестовыми данными: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+def get_task_by_id(task_id):
+    """Возвращает задание по ID"""
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
+            return cursor.fetchone()
+        except Error as e:
+            print(f"Ошибка при получении задания: {e}")
+        finally:
+            conn.close()
+    return None
+
+def create_task(title, content, answer_formula="", difficulty=2, class_group=5):
+    """Создает новое задание с заголовком и контентом"""
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                """INSERT INTO tasks 
+                (title, content, answer_formula, difficulty, class_group) 
+                VALUES (?, ?, ?, ?, ?)""",
+                (title, content, answer_formula, difficulty, class_group)
+            )
+            conn.commit()
+            return cursor.lastrowid
+        except Error as e:
+            print(f"Ошибка при создании задания: {e}")
+            conn.rollback()
+            return None
+        finally:
+            conn.close()
+    return None
+
+def update_task(task_id, template, answer_formula, difficulty, class_group):
+    """Обновляет существующее задание"""
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                """UPDATE tasks 
+                SET template = ?, answer_formula = ?, difficulty = ?, class_group = ? 
+                WHERE id = ?""",
+                (template, answer_formula, difficulty, class_group, task_id)
+            )
+            conn.commit()
+            return cursor.rowcount > 0
+        except Error as e:
+            print(f"Ошибка при обновлении задания: {e}")
+            conn.rollback()
+        finally:
+            conn.close()
+    return False
+
+def delete_task(task_id):
+    """Удаляет задание"""
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            # Сначала удаляем связи с уроками
+            cursor.execute("DELETE FROM lesson_tasks WHERE task_id = ?", (task_id,))
+            # Затем само задание
+            cursor.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+            conn.commit()
+            return cursor.rowcount > 0
+        except Error as e:
+            print(f"Ошибка при удалении задания: {e}")
+            conn.rollback()
+        finally:
+            conn.close()
+    return False
+
+def db_create_hint(task_id, content):
+    """Создает подсказку для задания"""
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO hints (task_id, content) VALUES (?, ?)",
+                (task_id, content)
+            )
+            conn.commit()
+            return cursor.lastrowid
+        except Error as e:
+            print(f"Ошибка при создании подсказки: {e}")
+            conn.rollback()
+            return None
+        finally:
+            conn.close()
+    return None
+
+def get_all_tasks(class_group=None):
+    """Возвращает все задания (или для определенного класса)"""
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            if class_group:
+                cursor.execute("SELECT * FROM tasks WHERE class_group = ? ORDER BY created_at DESC", 
+                             (class_group,))
+            else:
+                cursor.execute("SELECT * FROM tasks ORDER BY created_at DESC")
+            return cursor.fetchall()
+        except Error as e:
+            print(f"Ошибка при получении заданий: {e}")
+        finally:
+            conn.close()
+    return []
+
+def finish_duel(duel_id):
+    """Помечает дуэль как завершенную"""
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE math_duels SET status = 'finished' WHERE id = ?",
+            (duel_id,)
+        )
+        conn.commit()
+        return True
+    except Error as e:
+        print(f"Ошибка при завершении дуэли: {e}")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+# Инициализация базы при импорте
+init_db()

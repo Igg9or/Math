@@ -898,39 +898,7 @@ def duel_round(duel_id, round_number):
         opponent=opponent,
         tasks=tasks
     )
-@app.route('/submit_duel_answer', methods=['POST'])
-def submit_duel_answer():
-    if 'student_id' not in session:
-        return redirect(url_for('index'))
-    
-    duel_id = request.form['duel_id']
-    round_number = request.form['round_number']
-    task_id = request.form['task_id']
-    answer = request.form['answer']
-    
-    conn = create_connection()
-    cursor = conn.cursor()
-    
-    # Получаем правильный ответ
-    cursor.execute("SELECT answer_formula FROM tasks WHERE id = ?", (task_id,))
-    task = cursor.fetchone()
-    correct_answer = eval(task['answer_formula'])
-    
-    # Проверяем ответ
-    is_correct = float(answer) == correct_answer
-    
-    # Сохраняем результат
-    cursor.execute("""
-        INSERT INTO duel_answers 
-        (duel_id, round_number, task_id, student_id, answer, is_correct)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (duel_id, round_number, task_id, session['student_id'], answer, is_correct))
-    
-    conn.commit()
-    conn.close()
-    
-    flash("Ответ принят!" if is_correct else "Неправильно, попробуйте ещё раз", "success" if is_correct else "error")
-    return redirect(url_for('duel_round', duel_id=duel_id, round_number=round_number))
+
 
 @app.route('/duel/<int:duel_id>/add_tasks', methods=['POST'])
 def add_tasks_to_round(duel_id):
@@ -1110,57 +1078,6 @@ def submit_duel_answer_handler(duel_id, match_id):
     
     return redirect(url_for('duel_match', duel_id=duel_id, match_id=match_id))
 
-@app.route('/student_duel/<int:duel_id>')
-def student_duel_view(duel_id):
-    if 'student_id' not in session:
-        return redirect(url_for('index'))
-
-    conn = create_connection()
-    try:
-        cursor = conn.cursor()
-        
-        # Получаем текущий матч ученика
-        cursor.execute("""
-            SELECT dm.*, t.title as task_title,
-                   dm.generated_task as task_content,
-                   dm.correct_answer
-            FROM duel_matches dm
-            LEFT JOIN tasks t ON dm.task_id = t.id
-            WHERE dm.duel_id = ? 
-            AND (dm.student1_id = ? OR dm.student2_id = ?)
-            AND dm.round_number = (
-                SELECT current_round FROM math_duels WHERE id = ?
-            )
-        """, (duel_id, session['student_id'], session['student_id'], duel_id))
-        
-        match = cursor.fetchone()
-        
-        if not match:
-            flash("У вас нет активных матчей", "warning")
-            return redirect(url_for('student_lessons', student_id=session['student_id']))
-
-        # Разбиваем сгенерированные задания
-        tasks = []
-        if match['task_content']:
-            tasks = [
-                {"text": task, "answer": answer} 
-                for task, answer in zip(
-                    match['task_content'].split('\n'),
-                    match['correct_answer'].split('\n')
-                )
-            ]
-
-        return render_template('student_duel.html',
-                            duel_id=duel_id,
-                            match=match,
-                            tasks=tasks)
-    
-    except Exception as e:
-        flash(f"Ошибка: {str(e)}", "error")
-        return redirect(url_for('index'))
-    finally:
-        conn.close()
-
 
 # Добавление шаблонов заданий
 @app.route('/duel/<int:duel_id>/add_templates/<int:round_number>', methods=['GET', 'POST'])
@@ -1326,78 +1243,67 @@ def view_duel_match(duel_id, match_id):
         conn.close()
 
 
-@app.route('/duel/<int:duel_id>/match/<int:match_id>/submit', methods=['POST'])
-def submit_duel_answers(duel_id, match_id):
+@app.route('/submit_duel_answers', methods=['POST'])
+def submit_duel_answers():
     if 'student_id' not in session:
         return redirect(url_for('index'))
+
+    # Для отладки
+    print("Полученные данные:", request.form)
     
+    # Получаем данные по НОВОМУ формату
+    duel_id = request.form.get('duel_id')
+    match_id = request.form.get('match_id')
+    user_answer = request.form.get('answer')          # Теперь просто 'answer'
+    correct_answer = request.form.get('correct_answer') # И 'correct_answer'
+    
+    # Проверка наличия всех данных
+    missing = []
+    if not duel_id: missing.append('duel_id')
+    if not match_id: missing.append('match_id')
+    if not user_answer: missing.append('answer')
+    if not correct_answer: missing.append('correct_answer')
+    
+    if missing:
+        flash(f"Отсутствуют обязательные данные: {', '.join(missing)}", "error")
+        return redirect(url_for('student_duel_view', duel_id=duel_id))
+    
+    # Проверка ответа
+    try:
+        is_correct = float(user_answer) == float(correct_answer)
+    except ValueError:
+        is_correct = False
+    
+    # Обновление БД
     conn = create_connection()
     try:
         cursor = conn.cursor()
         
-        # Проверяем доступ ученика к матчу
-        cursor.execute("""
-            SELECT * FROM duel_matches
-            WHERE id = ? AND (student1_id = ? OR student2_id = ?)
-        """, (match_id, session['student_id'], session['student_id']))
-        match = cursor.fetchone()
-        
-        if not match:
-            flash("Вы не участвуете в этом матче", "error")
-            return redirect(url_for('student_lessons', student_id=session['student_id']))
-        
-        # Проверяем ответы
-        correct_count = 0
-        total_tasks = 0
-        results = []
-        
-        for key in request.form:
-            if key.startswith('answer_'):
-                task_num = key.split('_')[1]
-                user_answer = request.form.get(key)
-                correct_answer = request.form.get(f'correct_answer_{task_num}')
-                
-                is_correct = user_answer.strip() == correct_answer.strip()
-                results.append(is_correct)
-                if is_correct:
-                    correct_count += 1
-                total_tasks += 1
-        
-        # Определяем победителя (если это не сделано ранее)
-        if not match['winner_id'] and total_tasks > 0:
-            opponent_id = match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id']
+        if is_correct:
+            cursor.execute("""
+                UPDATE duel_matches 
+                SET winner_id = ?
+                WHERE id = ? AND duel_id = ?
+            """, (session['student_id'], match_id, duel_id))
             
-            # Сравниваем результаты (в реальной системе нужно хранить ответы обоих участников)
-            # Здесь упрощенная логика - считаем что текущий участник ответил на correct_count вопросов
-            # В реальной системе нужно хранить ответы обоих участников и сравнивать
+            cursor.execute("""
+                UPDATE duel_participants
+                SET points = points + 1
+                WHERE duel_id = ? AND student_id = ?
+            """, (duel_id, session['student_id']))
             
-            # В данном примере просто устанавливаем текущего ученика как победителя если он ответил правильно на больше половины
-            if correct_count > total_tasks / 2:
-                cursor.execute("""
-                    UPDATE duel_matches SET winner_id = ?
-                    WHERE id = ?
-                """, (session['student_id'], match_id))
-                
-                # Начисляем очки
-                cursor.execute("""
-                    UPDATE duel_participants
-                    SET points = points + ?
-                    WHERE duel_id = ? AND student_id = ?
-                """, (correct_count * 2, duel_id, session['student_id']))
-                
-                conn.commit()
-                flash(f"Поздравляем! Вы выиграли этот раунд, правильно ответив на {correct_count} из {total_tasks} вопросов", "success")
-            else:
-                flash(f"Вы ответили правильно на {correct_count} из {total_tasks} вопросов. Попробуйте еще раз!", "warning")
-        
-        return redirect(url_for('student_duel_view', duel_id=duel_id))
-    
+            flash("✅ Ответ правильный! +1 балл", "success")
+        else:
+            flash(f"❌ Неверно. Правильный ответ: {correct_answer}", "error")
+            
+        conn.commit()
     except Exception as e:
         conn.rollback()
-        flash(f"Ошибка при обработке ответов: {str(e)}", "error")
-        return redirect(url_for('duel_match', duel_id=duel_id, match_id=match_id))
+        flash(f"Ошибка базы данных: {str(e)}", "error")
     finally:
         conn.close()
+
+    return redirect(url_for('student_duel_view', duel_id=duel_id))
 
 @app.route('/duel/<int:duel_id>/create_templates/<int:round_number>', methods=['GET', 'POST'])
 def create_round_templates(duel_id, round_number):
@@ -1581,6 +1487,65 @@ def select_round_for_templates(duel_id):
                          duel_id=duel_id,
                          current_round=current_round)
 
+
+@app.route('/student_duel/<int:duel_id>')
+def student_duel_view(duel_id):
+    if 'student_id' not in session:
+        return redirect(url_for('index'))
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем информацию о дуэли
+        cursor.execute("SELECT id, name, current_round FROM math_duels WHERE id = ?", (duel_id,))
+        duel = dict(cursor.fetchone() or {})
+        
+        # Получаем текущего ученика
+        cursor.execute("SELECT id, name FROM students WHERE id = ?", (session['student_id'],))
+        current_student = dict(cursor.fetchone() or {})
+        
+        # Получаем текущий матч
+        cursor.execute("""
+            SELECT dm.*, s1.name as student1_name, s2.name as student2_name 
+            FROM duel_matches dm
+            LEFT JOIN students s1 ON dm.student1_id = s1.id
+            LEFT JOIN students s2 ON dm.student2_id = s2.id
+            WHERE dm.duel_id = ? AND (dm.student1_id = ? OR dm.student2_id = ?)
+            ORDER BY dm.round_number DESC LIMIT 1
+        """, (duel_id, session['student_id'], session['student_id']))
+        match = dict(cursor.fetchone() or {})
+        
+        if not match:
+            flash("У вас нет активных матчей", "warning")
+            return redirect(url_for('student_lessons', student_id=session['student_id']))
+        
+        # Определяем противника
+        opponent = {
+            'id': match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id'],
+            'name': match['student1_name'] if match['student1_id'] != session['student_id'] else match['student2_name']
+        }
+        
+        # Получаем задания
+        tasks = []
+        if 'generated_task' in match and match['generated_task']:
+            task_texts = match['generated_task'].split('\n')
+            answers = match.get('correct_answer', '').split('\n')
+            tasks = [{'text': text, 'answer': answers[i] if i < len(answers) else ''} 
+                    for i, text in enumerate(task_texts)]
+        
+        return render_template('student_duel.html',
+                            duel=duel,
+                            match=match,
+                            current_student=current_student,
+                            opponent=opponent,
+                            tasks=tasks)
+    
+    except Exception as e:
+        flash(f"Ошибка: {str(e)}", "error")
+        return redirect(url_for('index'))
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":

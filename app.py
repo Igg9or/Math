@@ -512,6 +512,14 @@ def create_duel(class_id):
         try:
             cursor = conn.cursor()
             
+            # Получаем всех учеников класса
+            cursor.execute("SELECT id FROM students WHERE class_id = ?", (class_id,))
+            participants = [row['id'] for row in cursor.fetchall()]
+            
+            if len(participants) < 2:
+                flash("Для дуэли нужно минимум 2 участника", "error")
+                return redirect(url_for('create_duel', class_id=class_id))
+            
             # Создаем дуэль
             cursor.execute(
                 "INSERT INTO math_duels (class_id, name) VALUES (?, ?)",
@@ -520,45 +528,48 @@ def create_duel(class_id):
             duel_id = cursor.lastrowid
             
             # Добавляем участников
-            cursor.execute("SELECT id FROM students WHERE class_id = ?", (class_id,))
-            students = [row['id'] for row in cursor.fetchall()]
-            
-            for student_id in students:
+            for student_id in participants:
                 cursor.execute(
                     "INSERT INTO duel_participants (duel_id, student_id) VALUES (?, ?)",
                     (duel_id, student_id)
                 )
             
-            # Генерируем первый раунд
-            if students:
-                random.shuffle(students)
-                for i in range(0, len(students), 2):
-                    if i+1 < len(students):
-                        cursor.execute(
-                            """INSERT INTO duel_matches 
-                            (duel_id, round_number, bracket_type, student1_id, student2_id) 
-                            VALUES (?, 1, 'upper', ?, ?)""",
-                            (duel_id, students[i], students[i+1])
-                        )
+            # Определяем стадию
+            stage = determine_stage(len(participants))
+            print(f"Создаем дуэль с {len(participants)} участниками, начальная стадия: {stage}")
             
-            conn.commit()
-            task_ids = request.form.getlist('task_ids')
-            for task_id in task_ids:
-                cursor.execute(
-                     "INSERT INTO duel_round_tasks (duel_id, round_number, task_id) VALUES (?, 1, ?)",
-                     (duel_id, task_id)
-                )
+            # Формируем пары для первого раунда
+            random.shuffle(participants)
+            for i in range(0, len(participants), 2):
+                if i+1 < len(participants):
+                    # Для обычного матча с двумя участниками
+                    cursor.execute(
+                        """INSERT INTO duel_matches 
+                        (duel_id, round_number, bracket_type, student1_id, student2_id) 
+                        VALUES (?, ?, ?, ?, ?)""",
+                        (duel_id, 1, stage, participants[i], participants[i+1])
+                    )
+                else:
+                    # Для автоматического прохода при нечетном количестве
+                    cursor.execute(
+                        """INSERT INTO duel_matches 
+                        (duel_id, round_number, bracket_type, student1_id, winner_id) 
+                        VALUES (?, ?, ?, ?, ?)""",
+                        (duel_id, 1, stage, participants[i], participants[i])
+                    )
+            
             conn.commit()
             flash("Дуэль успешно создана!", "success")
             return redirect(url_for('view_duel', duel_id=duel_id))
         except Error as e:
             conn.rollback()
             flash(f"Ошибка при создании дуэли: {str(e)}", "error")
+            return redirect(url_for('class_lessons', class_id=class_id))
         finally:
             conn.close()
 
-    # GET запрос - показать форму
     return render_template('create_duel.html', class_id=class_id)
+
 
 @app.route('/duel/<int:duel_id>')
 def view_duel(duel_id):
@@ -632,84 +643,46 @@ def generate_round(duel_id):
         cursor.execute("SELECT current_round FROM math_duels WHERE id = ?", (duel_id,))
         current_round = cursor.fetchone()['current_round']
         new_round = current_round + 1
-
-        # Для первого раунда
-        if current_round == 0:
-            cursor.execute("""
-                SELECT student_id FROM duel_participants 
-                WHERE duel_id = ?
-                ORDER BY RANDOM()
-            """, (duel_id,))
-            participants = [row['student_id'] for row in cursor.fetchall()]
-            
-            # Формируем пары для верхней сетки
-            for i in range(0, len(participants), 2):
-                if i+1 < len(participants):
-                    cursor.execute("""
-                        INSERT INTO duel_matches 
-                        (duel_id, round_number, bracket_type, student1_id, student2_id)
-                        VALUES (?, ?, 'upper', ?, ?)
-                    """, (duel_id, new_round, participants[i], participants[i+1]))
-        else:
-            # Для последующих раундов
-            
-            # 1. Получаем победителей верхней сетки предыдущего раунда
-            cursor.execute("""
-                SELECT winner_id FROM duel_matches 
-                WHERE duel_id = ? AND round_number = ? AND bracket_type = 'upper'
-            """, (duel_id, current_round))
-            upper_winners = [row['winner_id'] for row in cursor.fetchall()]
-            
-            # 2. Получаем проигравших верхней сетки предыдущего раунда
-            cursor.execute("""
-                SELECT student1_id, student2_id, winner_id 
-                FROM duel_matches 
-                WHERE duel_id = ? AND round_number = ? AND bracket_type = 'upper'
-            """, (duel_id, current_round))
-            upper_losers = []
-            for row in cursor.fetchall():
-                if row['student1_id'] != row['winner_id']:
-                    upper_losers.append(row['student1_id'])
-                else:
-                    upper_losers.append(row['student2_id'])
-            
-            # 3. Получаем победителей нижней сетки предыдущего раунда
-            cursor.execute("""
-                SELECT winner_id FROM duel_matches 
-                WHERE duel_id = ? AND round_number = ? AND bracket_type = 'lower'
-            """, (duel_id, current_round))
-            lower_winners = [row['winner_id'] for row in cursor.fetchall()]
-            
-            # 4. Формируем верхнюю сетку (победители верхней сетки)
-            for i in range(0, len(upper_winners), 2):
-                if i+1 < len(upper_winners):
-                    cursor.execute("""
-                        INSERT INTO duel_matches 
-                        (duel_id, round_number, bracket_type, student1_id, student2_id)
-                        VALUES (?, ?, 'upper', ?, ?)
-                    """, (duel_id, new_round, upper_winners[i], upper_winners[i+1]))
-            
-            # 5. Формируем нижнюю сетку (проигравшие верхней + победители нижней)
-            lower_participants = upper_losers + lower_winners
-            random.shuffle(lower_participants)
-            
-            for i in range(0, len(lower_participants), 2):
-                if i+1 < len(lower_participants):
-                    cursor.execute("""
-                        INSERT INTO duel_matches 
-                        (duel_id, round_number, bracket_type, student1_id, student2_id)
-                        VALUES (?, ?, 'lower', ?, ?)
-                    """, (duel_id, new_round, lower_participants[i], lower_participants[i+1]))
-
-        # Обновляем номер текущего раунда
+        
+        # Получаем победителей предыдущего раунда
+        cursor.execute("""
+            SELECT winner_id FROM duel_matches 
+            WHERE duel_id = ? AND round_number = ? AND winner_id IS NOT NULL
+        """, (duel_id, current_round))
+        winners = [row['winner_id'] for row in cursor.fetchall()]
+        
+        if len(winners) < 2:
+            flash("Недостаточно победителей для следующего раунда", "error")
+            return redirect(url_for('view_duel', duel_id=duel_id))
+        
+        # Определяем следующую стадию
+        next_stage = {
+            '1/64': '1/32',
+            '1/32': '1/16',
+            '1/16': '1/8',
+            '1/8': '1/4',
+            '1/4': '1/2',
+            '1/2': 'final'
+        }.get(get_current_stage(duel_id, current_round), 'final')
+        
+        # Создаем матчи нового раунда
+        for i in range(0, len(winners), 2):
+            if i+1 < len(winners):
+                cursor.execute("""
+                    INSERT INTO duel_matches 
+                    (duel_id, round_number, bracket_type, student1_id, student2_id)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (duel_id, new_round, next_stage, winners[i], winners[i+1]))
+        
+        # Обновляем текущий раунд
         cursor.execute("""
             UPDATE math_duels 
             SET current_round = ? 
             WHERE id = ?
         """, (new_round, duel_id))
-
+        
         conn.commit()
-        flash(f"Раунд {new_round} сгенерирован!", "success")
+        flash(f"Раунд {new_round} ({next_stage}) сгенерирован!", "success")
     except Error as e:
         conn.rollback()
         flash(f"Ошибка при генерации раунда: {str(e)}", "error")
@@ -717,6 +690,21 @@ def generate_round(duel_id):
         conn.close()
     
     return redirect(url_for('view_duel', duel_id=duel_id))
+
+def get_current_stage(duel_id, round_number):
+    """Получает текущую стадию турнира"""
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT bracket_type FROM duel_matches 
+            WHERE duel_id = ? AND round_number = ?
+            LIMIT 1
+        """, (duel_id, round_number))
+        result = cursor.fetchone()
+        return result['bracket_type'] if result else '1/2'
+    finally:
+        conn.close()
 
 @app.route('/duel/<int:duel_id>/match/<int:match_id>/set_task', methods=['POST'])
 def set_duel_match_task(duel_id, match_id):
@@ -928,56 +916,43 @@ def add_tasks_to_round(duel_id):
 
 @app.route('/duel/<int:duel_id>/generate_first_round', methods=['POST'])
 def generate_first_round(duel_id):
-    if not session.get('is_admin'):
-        abort(403)
-
     conn = create_connection()
     try:
         cursor = conn.cursor()
         
-        # 1. Получаем всех участников дуэли
-        cursor.execute("""
-            SELECT student_id FROM duel_participants 
-            WHERE duel_id = ?
-            ORDER BY RANDOM()
-        """, (duel_id,))
+        # Получаем участников и перемешиваем
+        cursor.execute("SELECT student_id FROM duel_participants WHERE duel_id = ?", (duel_id,))
         participants = [row['student_id'] for row in cursor.fetchall()]
+        random.shuffle(participants)
         
-        if len(participants) < 2:
-            flash("Для формирования пар нужно минимум 2 участника", "error")
-            return redirect(url_for('view_duel', duel_id=duel_id))
+        # Определяем стадию
+        stage = determine_stage(len(participants))
         
-        # 2. Формируем пары для первого раунда
+        # Создаем матчи
         for i in range(0, len(participants), 2):
             if i+1 < len(participants):
                 cursor.execute("""
                     INSERT INTO duel_matches 
-                    (duel_id, round_number, bracket_type, student1_id, student2_id) 
-                    VALUES (?, 1, 'upper', ?, ?)
-                """, (duel_id, participants[i], participants[i+1]))
+                    (duel_id, round_number, bracket_type, student1_id, student2_id)
+                    VALUES (?, 1, ?, ?, ?)
+                """, (duel_id, stage, participants[i], participants[i+1]))
             else:
-                # Если нечетное количество, один ученик проходит автоматически
+                # Автоматический проход при нечетном количестве
                 cursor.execute("""
                     INSERT INTO duel_matches 
-                    (duel_id, round_number, bracket_type, student1_id, winner_id) 
-                    VALUES (?, 1, 'upper', ?, ?)
-                """, (duel_id, participants[i], participants[i]))
+                    (duel_id, round_number, bracket_type, student1_id, winner_id)
+                    VALUES (?, 1, ?, ?, ?)
+                """, (duel_id, stage, participants[i], participants[i]))
         
-        # 3. Обновляем текущий раунд
-        cursor.execute("""
-            UPDATE math_duels 
-            SET current_round = 1 
-            WHERE id = ?
-        """, (duel_id,))
-        
+        # Обновляем статус дуэли
+        cursor.execute("UPDATE math_duels SET current_round = 1 WHERE id = ?", (duel_id,))
         conn.commit()
-        flash("Пары для первого раунда успешно сформированы!", "success")
+        flash("Первый раунд успешно создан!", "success")
     except Exception as e:
         conn.rollback()
-        flash(f"Ошибка при формировании пар: {str(e)}", "error")
+        flash(f"Ошибка: {str(e)}", "error")
     finally:
         conn.close()
-    
     return redirect(url_for('view_duel', duel_id=duel_id))
 
 
@@ -1119,78 +1094,7 @@ def add_duel_templates(duel_id, round_number):
     return render_template('add_duel_tasks.html', duel=duel, round_number=round_number)
 
 # Генерация заданий для всех матчей раунда
-def generate_tasks_for_round(duel_id, round_number, match_id=None):
-    conn = create_connection()
-    try:
-        cursor = conn.cursor()
-        
-        # Получаем шаблоны
-        cursor.execute("""
-            SELECT template, answer_formula 
-            FROM duel_templates 
-            WHERE duel_id = ? AND round_number = ?
-        """, (duel_id, round_number))
-        templates = cursor.fetchall()
 
-        if not templates:
-            raise ValueError(f"No templates found for duel {duel_id}, round {round_number}")
-
-        # Получаем матчи для обработки
-        query = """
-            SELECT id FROM duel_matches 
-            WHERE duel_id = ? AND round_number = ?
-        """ if not match_id else "SELECT id FROM duel_matches WHERE id = ?"
-        params = (duel_id, round_number) if not match_id else (match_id,)
-        
-        cursor.execute(query, params)
-        matches = cursor.fetchall()
-
-        for match in matches:
-            tasks = []
-            answers = []
-            
-            for template in templates:
-                # Извлекаем параметры из шаблона
-                params = {}
-                for param in re.findall(r'\{([A-Z]+)\}', template['template']):
-                    params[param] = random.randint(1, 10)
-                
-                # Генерируем задание
-                task_text = template['template']
-                for param, value in params.items():
-                    task_text = task_text.replace(f'{{{param}}}', str(value))
-                
-                # Безопасное вычисление ответа
-                try:
-                    # Подготавливаем формулу (удаляем фигурные скобки)
-                    formula = template['answer_formula']
-                    for p in params:
-                        formula = formula.replace(f'{{{p}}}', str(params[p]))
-                    
-                    # Проверяем на безопасные только математические операции
-                    if not all(c in ' 0123456789+-*/().' for c in formula):
-                        raise ValueError("Формула содержит недопустимые символы")
-                    
-                    answer = str(eval(formula))
-                except Exception as e:
-                    raise ValueError(f"Ошибка в формуле '{template['answer_formula']}': {str(e)}")
-                
-                tasks.append(task_text)
-                answers.append(answer)
-
-            cursor.execute("""
-                UPDATE duel_matches 
-                SET generated_task = ?, correct_answer = ?
-                WHERE id = ?
-            """, ('\n'.join(tasks), '\n'.join(answers), match['id']))
-        
-        conn.commit()
-        return True
-    except Exception as e:
-        conn.rollback()
-        raise e
-    finally:
-        conn.close()
 
 # Маршрут для выполнения задания учеником
 @app.route('/duel/<int:duel_id>/match/<int:match_id>/view')  # Добавили /view в URL
@@ -1311,39 +1215,55 @@ def create_round_templates(duel_id, round_number):
         abort(403)
     
     conn = create_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM math_duels WHERE id = ?", (duel_id,))
-    duel = cursor.fetchone()
-    
-    if request.method == 'POST':
-        templates = request.form.getlist('templates[]')
-        answer_formulas = request.form.getlist('answer_formulas[]')
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM math_duels WHERE id = ?", (duel_id,))
+        duel = cursor.fetchone()
         
-        try:
-            # Удаляем старые шаблоны для этого раунда
+        if request.method == 'POST':
+            templates = request.form.getlist('templates[]')
+            answer_formulas = request.form.getlist('answer_formulas[]')
+            
+            # Удаляем старые шаблоны
             cursor.execute("DELETE FROM duel_templates WHERE duel_id = ? AND round_number = ?", 
                          (duel_id, round_number))
             
-            # Сохраняем новые шаблоны
+            # Сохраняем новые
             for template, formula in zip(templates, answer_formulas):
-                cursor.execute("""
-                    INSERT INTO duel_templates (duel_id, round_number, template, answer_formula)
-                    VALUES (?, ?, ?, ?)
-                """, (duel_id, round_number, template, formula))
+                if template.strip() and formula.strip():
+                    cursor.execute("""
+                        INSERT INTO duel_templates (duel_id, round_number, template, answer_formula)
+                        VALUES (?, ?, ?, ?)
+                    """, (duel_id, round_number, template.strip(), formula.strip()))
             
             conn.commit()
-            flash("Шаблоны заданий успешно сохранены!", "success")
+            flash("Шаблоны успешно сохранены!", "success")
+            
+            # Предлагаем применить шаблоны
+            cursor.execute("SELECT COUNT(*) FROM duel_matches WHERE duel_id = ? AND round_number = ?", 
+                         (duel_id, round_number))
+            match_count = cursor.fetchone()[0]
+            
+            if match_count > 0:
+                return render_template('add_duel_tasks.html', 
+                                    duel=duel,
+                                    duel_id=duel_id,
+                                    round_number=round_number,
+                                    show_apply_button=True)
+            
             return redirect(url_for('view_duel', duel_id=duel_id))
-        except Exception as e:
-            conn.rollback()
-            flash(f"Ошибка: {str(e)}", "error")
-        finally:
-            conn.close()
+        
+        return render_template('add_duel_tasks.html', 
+                            duel=duel,
+                            duel_id=duel_id,
+                            round_number=round_number)
     
-    return render_template('add_duel_tasks.html', 
-                         duel=duel,
-                         duel_id=duel_id,
-                         round_number=round_number)
+    except Exception as e:
+        conn.rollback()
+        flash(f"Ошибка: {str(e)}", "error")
+        return redirect(url_for('view_duel', duel_id=duel_id))
+    finally:
+        conn.close()
 
 
 
@@ -1465,6 +1385,89 @@ def apply_templates_to_round(duel_id):
             conn.close()
     
 
+@app.route('/duel/<int:duel_id>/apply_templates', methods=['POST'])
+def apply_templates_to_all_matches(duel_id):
+    if not session.get('is_admin'):
+        abort(403)
+
+    conn = create_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Получаем текущий раунд
+        cursor.execute("SELECT current_round FROM math_duels WHERE id = ?", (duel_id,))
+        current_round = cursor.fetchone()['current_round']
+        
+        # Получаем шаблоны для этого раунда
+        cursor.execute("""
+            SELECT template, answer_formula 
+            FROM duel_templates 
+            WHERE duel_id = ? AND round_number = ?
+        """, (duel_id, current_round))
+        templates = cursor.fetchall()
+        
+        if not templates:
+            flash("Нет шаблонов заданий для текущего раунда", "error")
+            return redirect(url_for('view_duel', duel_id=duel_id))
+        
+        # Получаем все активные матчи текущего раунда
+        cursor.execute("""
+            SELECT id FROM duel_matches 
+            WHERE duel_id = ? AND round_number = ? AND winner_id IS NULL
+        """, (duel_id, current_round))
+        matches = cursor.fetchall()
+        
+        # Для каждого матча генерируем задания
+        for match in matches:
+            tasks = []
+            answers = []
+            
+            for template in templates:
+                # Генерируем уникальные параметры для каждого задания
+                params = {}
+                for param in re.findall(r'\{([A-Z]+)\}', template['template']):
+                    params[param] = random.randint(1, 10)
+                
+                # Подставляем параметры в шаблон
+                task_text = template['template']
+                for param, value in params.items():
+                    task_text = task_text.replace(f'{{{param}}}', str(value))
+                
+                # Вычисляем ответ
+                try:
+                    formula = template['answer_formula']
+                    for p in params:
+                        formula = formula.replace(f'{{{p}}}', str(params[p]))
+                    answer = str(eval(formula))
+                except Exception as e:
+                    flash(f"Ошибка в формуле: {str(e)}", "error")
+                    continue
+                
+                tasks.append(task_text)
+                answers.append(answer)
+            
+            # Обновляем матч
+            cursor.execute("""
+                UPDATE duel_matches 
+                SET generated_task = ?, correct_answer = ?
+                WHERE id = ?
+            """, ('\n'.join(tasks), '\n'.join(answers), match['id']))
+        
+        conn.commit()
+        flash(f"Шаблоны успешно применены к {len(matches)} парам!", "success")
+    except Exception as e:
+        conn.rollback()
+        flash(f"Ошибка: {str(e)}", "error")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('view_duel', duel_id=duel_id))
+
+@app.route('/duel/<int:duel_id>/generate_tasks', methods=['POST'])
+def generate_tasks_for_round(duel_id):
+    """Новая версия функции для генерации заданий"""
+    return apply_templates_to_all_matches(duel_id)
+
 @app.route('/duel/<int:duel_id>/select_round', methods=['GET', 'POST'])
 def select_round_for_templates(duel_id):
     if not session.get('is_admin'):
@@ -1498,47 +1501,123 @@ def student_duel_view(duel_id):
         cursor = conn.cursor()
         
         # Получаем информацию о дуэли
-        cursor.execute("SELECT id, name, current_round FROM math_duels WHERE id = ?", (duel_id,))
-        duel = dict(cursor.fetchone() or {})
+        cursor.execute("""
+            SELECT id, name, current_round 
+            FROM math_duels 
+            WHERE id = ?
+        """, (duel_id,))
+        duel = cursor.fetchone()
+        
+        if not duel:
+            flash("Дуэль не найдена", "error")
+            return redirect(url_for('student_lessons', student_id=session['student_id']))
         
         # Получаем текущего ученика
-        cursor.execute("SELECT id, name FROM students WHERE id = ?", (session['student_id'],))
-        current_student = dict(cursor.fetchone() or {})
-        
-        # Получаем текущий матч
         cursor.execute("""
-            SELECT dm.*, s1.name as student1_name, s2.name as student2_name 
+            SELECT id, name 
+            FROM students 
+            WHERE id = ?
+        """, (session['student_id'],))
+        current_student = cursor.fetchone()
+        
+        # Получаем текущий матч ученика
+        cursor.execute("""
+            SELECT dm.*, 
+                   s1.name as student1_name, 
+                   s2.name as student2_name,
+                   t.title as task_title,
+                   dm.generated_task,
+                   dm.correct_answer
             FROM duel_matches dm
             LEFT JOIN students s1 ON dm.student1_id = s1.id
             LEFT JOIN students s2 ON dm.student2_id = s2.id
-            WHERE dm.duel_id = ? AND (dm.student1_id = ? OR dm.student2_id = ?)
-            ORDER BY dm.round_number DESC LIMIT 1
+            LEFT JOIN tasks t ON dm.task_id = t.id
+            WHERE dm.duel_id = ? 
+            AND (dm.student1_id = ? OR dm.student2_id = ?)
+            ORDER BY dm.round_number DESC
+            LIMIT 1
         """, (duel_id, session['student_id'], session['student_id']))
-        match = dict(cursor.fetchone() or {})
+        match = cursor.fetchone()
         
         if not match:
-            flash("У вас нет активных матчей", "warning")
+            flash("У вас нет активных матчей в этой дуэли", "warning")
             return redirect(url_for('student_lessons', student_id=session['student_id']))
         
         # Определяем противника
-        opponent = {
-            'id': match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id'],
-            'name': match['student1_name'] if match['student1_id'] != session['student_id'] else match['student2_name']
+        opponent_id = match['student1_id'] if match['student1_id'] != session['student_id'] else match['student2_id']
+        cursor.execute("SELECT id, name FROM students WHERE id = ?", (opponent_id,))
+        opponent = cursor.fetchone()
+        
+        # Получаем прогресс ученика в турнире
+        cursor.execute("""
+            SELECT dm.bracket_type, 
+                   dm.student1_id, 
+                   dm.student2_id, 
+                   dm.winner_id
+            FROM duel_matches dm
+            WHERE dm.duel_id = ? 
+            AND (dm.student1_id = ? OR dm.student2_id = ?)
+            ORDER BY 
+                CASE dm.bracket_type
+                    WHEN '1/64' THEN 1
+                    WHEN '1/32' THEN 2
+                    WHEN '1/16' THEN 3
+                    WHEN '1/8' THEN 4
+                    WHEN '1/4' THEN 5
+                    WHEN '1/2' THEN 6
+                    WHEN 'final' THEN 7
+                    ELSE 8
+                END
+        """, (duel_id, session['student_id'], session['student_id']))
+        
+        # Инициализируем прогресс для всех возможных стадий
+        student_progress = {
+            '1/64': None,
+            '1/32': None,
+            '1/16': None,
+            '1/8': None,
+            '1/4': None,
+            '1/2': None,
+            'final': None
         }
         
-        # Получаем задания
+        for m in cursor.fetchall():
+            opponent_id = m['student1_id'] if m['student1_id'] != session['student_id'] else m['student2_id']
+            cursor.execute("SELECT name FROM students WHERE id = ?", (opponent_id,))
+            opponent_name = cursor.fetchone()['name']
+            
+            student_progress[m['bracket_type']] = {
+                'opponent': opponent_name,
+                'won': m['winner_id'] == session['student_id']
+            }
+        
+        # Формируем задания для текущего матча
         tasks = []
-        if 'generated_task' in match and match['generated_task']:
+        if match['generated_task'] and match['correct_answer']:
             task_texts = match['generated_task'].split('\n')
-            answers = match.get('correct_answer', '').split('\n')
-            tasks = [{'text': text, 'answer': answers[i] if i < len(answers) else ''} 
-                    for i, text in enumerate(task_texts)]
+            answers = match['correct_answer'].split('\n')
+            
+            for i, text in enumerate(task_texts):
+                tasks.append({
+                    'text': text,
+                    'answer': answers[i] if i < len(answers) else ''
+                })
         
         return render_template('student_duel.html',
-                            duel=duel,
-                            match=match,
+                            duel={
+                                'id': duel['id'],
+                                'name': duel['name'],
+                                'current_round': duel['current_round']
+                            },
+                            match={
+                                'id': match['id'],
+                                'round_number': match['round_number'],
+                                'student1_name': match['student1_name'],
+                                'student2_name': match['student2_name']
+                            },
                             current_student=current_student,
                             opponent=opponent,
+                            student_progress=student_progress,
                             tasks=tasks)
     
     except Exception as e:
@@ -1547,6 +1626,25 @@ def student_duel_view(duel_id):
     finally:
         conn.close()
 
+def determine_stage(participant_count):
+    """Определяет начальную стадию турнира по количеству участников"""
+    stages = [
+        (2, '1/2'),
+        (4, '1/4'),
+        (8, '1/8'), 
+        (16, '1/16'),
+        (32, '1/32'),
+        (64, '1/64')
+    ]
+    
+    # Находим ближайшую нижнюю степень двойки
+    closest_stage = '1/2'  # минимальная стадия
+    for threshold, stage in sorted(stages, reverse=True):
+        if participant_count >= threshold:
+            closest_stage = stage
+            break
+    
+    return closest_stage
 
 if __name__ == "__main__":
     from waitress import serve

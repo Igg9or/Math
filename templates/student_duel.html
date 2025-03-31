@@ -3,94 +3,74 @@
 {% block content %}
 <div class="student-duel-container">
     <div class="duel-header">
-        <h1>Дуэль: {% if duel and 'name' in duel %}{{ duel['name'] }}{% else %}Без названия{% endif %}</h1>
-        <div class="round-info">Раунд {% if match and 'round_number' in match %}{{ match['round_number'] }}{% else %}1{% endif %}</div>
+        <h1>Дуэль: {{ duel.name }}</h1>
+        <div class="round-info">Раунд {{ match.round_number }}</div>
     </div>
 
     <div class="duel-match">
         <div class="players">
             <div class="player you">
                 <span class="player-label">Вы:</span>
-                <span class="player-name">
-                    {% if current_student and 'name' in current_student %}
-                        {{ current_student['name'] }}
-                    {% else %}
-                        Неизвестный ученик
-                    {% endif %}
-                </span>
+                <span class="player-name">{{ current_student.name }}</span>
             </div>
             <div class="vs">VS</div>
             <div class="player opponent">
                 <span class="player-label">Противник:</span>
-                <span class="player-name">
-                    {% if opponent and 'name' in opponent %}
-                        {{ opponent['name'] }}
-                    {% else %}
-                        Неизвестный противник
-                    {% endif %}
-                </span>
+                <span class="player-name">{{ opponent.name }}</span>
             </div>
         </div>
 
+        <div class="tournament-progress">
+            <h3>Ваш турнирный путь:</h3>
+            <div class="progress-stages">
+                {% for stage in ['1/64', '1/32', '1/16', '1/8', '1/4', '1/2', 'final'] %}
+                    <div class="stage {% if student_progress[stage] %}active{% endif %}">
+                        <span class="stage-name">{{ stage }}</span>
+                        {% if student_progress[stage] %}
+                            <span class="result {% if student_progress[stage].won %}won{% else %}lost{% endif %}">
+                                {{ student_progress[stage].opponent }}
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if tasks %}
         <div class="task-section">
-            {% if tasks %}
-            <div class="tasks-list">
+            <form method="POST" action="{{ url_for('submit_duel_answers') }}">
+                <input type="hidden" name="duel_id" value="{{ duel.id }}">
+                <input type="hidden" name="match_id" value="{{ match.id }}">
+                
                 {% for task in tasks %}
                 <div class="task-card">
                     <h3 class="task-title">Задание {{ loop.index }}</h3>
-                    <div class="task-content">
-                        {% if 'text' in task %}
-                            {{ task['text'] }}
-                        {% else %}
-                            Текст задания не загружен
-                        {% endif %}
+                    <div class="task-content">{{ task.text }}</div>
+                    <div class="answer-section">
+                        <label>Ваш ответ:</label>
+                        <input type="number" step="any" name="answer" required>
+                        <input type="hidden" name="correct_answer" value="{{ task.answer }}">
                     </div>
-                    <form method="POST" action="{{ url_for('submit_duel_answers') }}">
-                        <input type="hidden" name="duel_id" value="{{ duel.id }}">
-                        <input type="hidden" name="match_id" value="{{ match.id }}">
-                        
-                        <form method="POST" action="{{ url_for('submit_duel_answers') }}">
-                            <input type="hidden" name="duel_id" value="{{ duel.id }}">
-                            <input type="hidden" name="match_id" value="{{ match.id }}">
-                            
-                            {% for task in tasks %}
-                            <div class="task-card">
-                                <div class="task-content">{{ task.text }}</div>
-                                <input type="number" name="answer" required>
-                                <input type="hidden" name="correct_answer" value="{{ task.answer }}">
-                            </div>
-                            {% endfor %}
-                            
-                            <button type="submit">Отправить ответ</button>
-                        </form>
-                        
-                        <button type="submit">Отправить ответ</button>
-                    </form>
                 </div>
                 {% endfor %}
-            </div>
-            {% else %}
-            <div class="no-tasks-message">
-                <p>Ожидаем назначения заданий. Пожалуйста, обновите страницу позже.</p>
-            </div>
-            {% endif %}
+                
+                <button type="submit" class="btn-submit">Отправить ответы</button>
+            </form>
         </div>
+        {% else %}
+        <div class="no-tasks-message">
+            <p>Ожидаем назначения заданий. Пожалуйста, обновите страницу позже.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
-{% endblock %}
 
-{% block styles %}
-{{ super() }}
 <style>
-/* Основные стили */
 .student-duel-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
     font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
 .duel-header {
@@ -103,7 +83,6 @@
 .duel-header h1 {
     color: #2c3e50;
     margin-bottom: 10px;
-    font-size: 28px;
 }
 
 .round-info {
@@ -112,7 +91,6 @@
     font-weight: bold;
 }
 
-/* Стили игроков */
 .players {
     display: flex;
     justify-content: center;
@@ -161,23 +139,69 @@
     padding: 0 15px;
 }
 
-/* Стили заданий */
-.task-section {
-    margin-top: 30px;
+.tournament-progress {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
 }
 
-.tasks-list {
+.progress-stages {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 15px 0;
+}
+
+.stage {
+    flex: 0 0 auto;
+    width: 80px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+.stage.active {
+    background: #dee2e6;
+    color: #495057;
+    font-weight: bold;
+}
+
+.stage-name {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.result {
+    display: block;
+    font-size: 12px;
+    padding: 3px;
+    border-radius: 3px;
+}
+
+.result.won {
+    background: #c8e6c9;
+    color: #2e7d32;
+}
+
+.result.lost {
+    background: #ffcdd2;
+    color: #c62828;
+}
+
+.task-section {
+    margin-top: 30px;
 }
 
 .task-card {
     background: white;
     border-radius: 8px;
     padding: 20px;
+    margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border: 1px solid #eee;
 }
 
 .task-title {
@@ -186,46 +210,48 @@
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
-    font-size: 20px;
 }
 
 .task-content {
     font-size: 18px;
     margin: 15px 0;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 6px;
     line-height: 1.5;
 }
 
-.task-form {
+.answer-section {
     margin-top: 20px;
 }
 
-.answer-input {
+.answer-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.answer-section input[type="number"] {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 16px;
-    margin-bottom: 15px;
     box-sizing: border-box;
 }
 
 .btn-submit {
-    background: #27ae60;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #4CAF50;
     color: white;
     border: none;
-    padding: 12px 20px;
     border-radius: 6px;
+    font-size: 18px;
     cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s;
-    width: 100%;
+    margin-top: 20px;
 }
 
 .btn-submit:hover {
-    background: #219653;
+    background: #388e3c;
 }
 
 .no-tasks-message {
@@ -238,7 +264,6 @@
     border: 1px dashed #ddd;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     .players {
         flex-direction: column;
@@ -253,28 +278,15 @@
     .vs {
         padding: 15px 0;
     }
+    
+    .progress-stages {
+        gap: 10px;
+    }
+    
+    .stage {
+        width: 70px;
+        padding: 8px;
+    }
 }
 </style>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        setInterval(() => {
-            fetch(window.location.href)
-                .then(response => response.text())
-                .then(html => {
-                    const newContent = new DOMParser()
-                        .parseFromString(html, 'text/html')
-                        .querySelector('.tasks-list');
-                    
-                    if (newContent) {
-                        document.querySelector('.tasks-list').innerHTML = newContent.innerHTML;
-                    }
-                })
-                .catch(error => console.error('Ошибка обновления:', error));
-        }, 10000);
-    });
-    </script>
 {% endblock %}

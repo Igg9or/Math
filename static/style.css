@@ -683,3 +683,128 @@ small {
     background: #f5f5f5;
     border-radius: 8px;
 }
+
+.tournament-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 20px 0;
+}
+
+.stage-column {
+    min-width: 200px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.match-card {
+    background: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.player {
+    padding: 5px;
+}
+
+.winner {
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+.vs {
+    text-align: center;
+    margin: 5px 0;
+    color: #666;
+}
+
+.completed {
+    border-left: 3px solid #4caf50;
+}
+.mass-assign-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.fas {
+    margin-right: 5px;
+}
+/* Турнирная сетка */
+.tournament-bracket {
+    margin-top: 40px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.bracket-view {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 15px 0;
+}
+
+.bracket-stage {
+    min-width: 250px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.matches-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.match-card {
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 3px solid #ddd;
+}
+
+.match-card.current {
+    border-left-color: #3498db;
+    background: #e3f2fd;
+}
+
+.match-card.completed {
+    border-left-color: #4CAF50;
+}
+
+.player {
+    padding: 5px;
+}
+
+.winner {
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+.vs {
+    text-align: center;
+    margin: 5px 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.winner-badge {
+    margin-top: 5px;
+    padding: 3px;
+    background: #e8f5e9;
+    text-align: center;
+    font-size: 0.8em;
+    border-radius: 3px;
+}

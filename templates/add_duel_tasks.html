@@ -19,7 +19,12 @@
                 </div>
             </div>
         </div>
-        
+<div class="form-group">
+    <label>Генерация шаблона ИИ:</label>
+    <input type="text" id="ai-prompt" class="form-control" placeholder="Тема задания (например, «квадратные уравнения»)" />
+    <button type="button" id="generate-with-ai" class="btn btn-info mt-2">✨ Сгенерировать ИИ</button>
+    <small>Пример: "Придумай задачу на подстановку параметров {A}, {B}"</small>
+</div>        
         <button type="button" id="add-template" class="btn btn-secondary">+ Добавить еще шаблон</button>
         <button type="submit" class="btn btn-primary">Сохранить задания</button>
         {% if show_apply_button %}
@@ -34,21 +39,162 @@
 </div>
 
 <script>
-document.getElementById('add-template').addEventListener('click', function() {
-    const container = document.getElementById('templates-container');
-    const newTemplate = document.querySelector('.template-form').cloneNode(true);
-    newTemplate.querySelectorAll('input, textarea').forEach(el => el.value = '');
-    container.appendChild(newTemplate);
+    document.getElementById('generate-with-ai').addEventListener('click', async function() {
+    const button = this;
+    const prompt = document.getElementById('ai-prompt').value.trim();
+    
+    if (!prompt) {
+        alert("Пожалуйста, введите описание задания");
+        return;
+    }
+    
+    // Сохраняем исходное состояние кнопки
+    const originalText = button.innerHTML;
+    
+    // Показываем индикатор загрузки
+    button.disabled = true;
+    button.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Генерация...
+    `;
+    
+    try {
+        const response = await fetch('/generate_ai_template', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                prompt: `${prompt}. Обязательно используй параметры {A} и {B} в задании и формуле ответа.`
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+        
+        const data = await response.json();
+        
+        // Заполняем первую форму в списке
+        const firstTemplate = document.querySelector('.template-form');
+        if (firstTemplate) {
+            firstTemplate.querySelector('textarea[name="templates[]"]').value = data.task || '';
+            firstTemplate.querySelector('input[name="answer_formulas[]"]').value = data.answer || '';
+        }
+        
+        // Показываем уведомление
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success mt-3';
+        alertDiv.textContent = 'Шаблон успешно сгенерирован!';
+        button.parentNode.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), 3000);
+        
+    } catch (error) {
+        console.error('Ошибка генерации:', error);
+        alert('Ошибка при генерации: ' + error.message);
+    } finally {
+        // Восстанавливаем кнопку
+        button.disabled = false;
+        button.innerHTML = originalText;
+    }
 });
+// Обработчик для кнопки "Добавить еще шаблон"
+document.getElementById('add-template').addEventListener('click', function() {
+        const container = document.getElementById('templates-container');
+        const templateForm = document.querySelector('.template-form').cloneNode(true);
+        
+        // Очищаем значения в новом шаблоне
+        const inputs = templateForm.querySelectorAll('textarea, input');
+        inputs.forEach(input => input.value = '');
+        
+        // Добавляем кнопку удаления
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'btn btn-danger btn-sm mt-2';
+        deleteBtn.textContent = 'Удалить шаблон';
+        deleteBtn.onclick = function() {
+            container.removeChild(templateForm);
+        };
+        
+        templateForm.appendChild(deleteBtn);
+        container.appendChild(templateForm);
+    });
+
+    // Остальной существующий код...
+    document.getElementById('generate-with-ai').addEventListener('click', async function() {
+        // ... существующий код генерации ИИ ...
+    });
 </script>
 
 <style>
-.template-form {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    border: 1px dashed #ddd;
+.spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-left: 0.5em;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
 }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background: #333;
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+.toast-success {
+    background: #4CAF50;
+}
+
+.toast-error {
+    background: #F44336;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateY(10px); }
+}
+.template-form {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+        position: relative;
+    }
+    
+    .template-form .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .btn-danger {
+        background-color: #dc3545;
+    }
+    
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
 </style>
 {% endblock %}

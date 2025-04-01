@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 import sqlite3
+import json, os, logging, io, sys
+from dotenv import load_dotenv
 from sqlite3 import Error
-import random
+import random, logging
 import secrets
+import requests  # ← Добавьте эту строку вверху файла!
+from flask import request  # Убедитесь, что это есть (если используется Flask)
 from db import (
     init_db, 
     seed_db, 
@@ -14,14 +18,35 @@ from db import (
     delete_task,
     db_create_hint
 )
+
 from flask import abort
 from flask_session import Session
 import os
 from werkzeug.utils import secure_filename
 import re
+from flask import Flask, request, jsonify
+from logging.handlers import RotatingFileHandler
+
+sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+load_dotenv()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("api_errors.log"),
+        logging.StreamHandler()
+    ]
+)
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Конфигурация приложения
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -30,6 +55,18 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 1800  # 30 минут
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 Session(app)
+
+handler = RotatingFileHandler(
+    'app.log', 
+    encoding='utf-8',  # Важно!
+    maxBytes=1024 * 1024,
+    backupCount=3
+)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
+
+DEEPSEEK_API_KEY = "sk-0eebbaabbab648099f7e507d6e30f03a"
+DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
 
@@ -42,6 +79,16 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # Инициализация БД при старте
 init_db()
 seed_db()
+
+def parse_deepseek_response(response_text):
+    # Ищем JSON в ответе с помощью регулярки
+    json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+    if json_match:
+        try:
+            return json.loads(json_match.group())
+        except json.JSONDecodeError:
+            return None
+    return None
 
 @app.before_request
 def check_concurrent_users():
@@ -1646,11 +1693,120 @@ def determine_stage(participant_count):
     
     return closest_stage
 
+
+def generate_with_deepseek(prompt):
+    headers = {
+        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "model": "deepseek-chat",
+        "messages": [{
+            "role": "user",
+            "content": f"""
+            Придумай математическую задачу с параметрами {A} и {B} 
+            по теме: '{prompt}'. Ответ дай в JSON формате: 
+            {{"task": "текст задачи", "answer": "формула"}}
+            """
+        }],
+        "temperature": 0.7
+    }
+    
+    try:
+        response = requests.post(DEEPSEEK_API_URL, headers=headers, json=data)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        app.logger.error(f"DeepSeek API error: {str(e)}")
+        return None
+        
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Ошибка запроса: {str(e)}")
+        return {"error": str(e)}
+
+@app.route('/generate_ai_template', methods=['POST'])
+def generate_ai_template():
+    try:
+        # 1. Получаем и валидируем данные
+        data = request.get_json()
+        if not data or 'prompt' not in data:
+            return jsonify({"error": "Missing 'prompt' parameter"}), 400
+        
+        prompt = data['prompt']
+        
+        # 2. Формируем правильный запрос к API
+        headers = {
+            "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        system_message = """
+        You are a math task generator. Create a problem using {A} and {B} parameters.
+        Return JSON format: {"task": "...", "answer": "..."}
+        Use {A} and {B} in both task and answer formula.
+        Example: {"task": "Solve {A}x + {B} = 0", "answer": "-{B}/{A}"}
+        """
+        
+        payload = {
+            "model": "deepseek-chat",
+            "messages": [
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.7,
+            "response_format": {"type": "json_object"}
+        }
+        
+        # 3. Отправляем запрос к API
+        response = requests.post(
+            DEEPSEEK_API_URL,
+            headers=headers,
+            json=payload,
+            timeout=10
+        )
+        response.raise_for_status()
+        
+        # 4. Парсим ответ
+        api_response = response.json()
+        generated_content = json.loads(api_response['choices'][0]['message']['content'])
+        
+        # 5. Валидация ответа
+        if not all(key in generated_content for key in ['task', 'answer']):
+            raise ValueError("Invalid response format from API")
+        
+        # 6. Возвращаем результат
+        return jsonify({
+            "status": "success",
+            "task": generated_content['task'],
+            "answer": generated_content['answer']
+        })
+        
+    except requests.exceptions.RequestException as e:
+        app.logger.error(f"API request failed: {str(e)}")
+        return jsonify({"error": "API service unavailable"}), 503
+    except json.JSONDecodeError:
+        app.logger.error("Invalid JSON response from API")
+        return jsonify({"error": "Invalid API response"}), 502
+    except Exception as e:
+        app.logger.error(f"Generation error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == "__main__":
-    from waitress import serve
-    serve(
-        app,
+    # Настройка логгера с UTF-8
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler('app.log', encoding='utf-8'),
+            logging.StreamHandler(sys.stdout)  # Используем stdout с UTF-8
+        ]
+    )
+    
+    # Запуск сервера
+    app.run(
         host='0.0.0.0',
         port=5000,
-        threads=50
+        debug=False,  # В продакшене debug должен быть False
+        threaded=True
     )

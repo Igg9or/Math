@@ -1,0 +1,480 @@
+2025-04-01 19:24:56,922 - waitress - INFO - Serving on http://0.0.0.0:5000
+2025-04-01 19:26:15,433 - root - ERROR - Ошибка в роуте: name 'prompt_template' is not defined
+2025-04-01 19:29:59,930 - waitress - INFO - Serving on http://0.0.0.0:5000
+2025-04-01 19:30:22,476 - root - ERROR - Ошибка в роуте: 'latin-1' codec can't encode characters in position 7-9: ordinal not in range(256)
+2025-04-01 19:40:06,806 - waitress - INFO - Serving on http://0.0.0.0:5000
+2025-04-01 19:40:28,313 - root - ERROR - Ошибка в роуте: 'latin-1' codec can't encode characters in position 7-9: ordinal not in range(256)
+2025-04-01 19:44:59,028 - waitress - INFO - Serving on http://0.0.0.0:5000
+2025-04-01 19:45:22,050 - root - ERROR - Ошибка в роуте: 'latin-1' codec can't encode characters in position 7-9: ordinal not in range(256)
+2025-04-01 19:50:39,355 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.105:5000
+2025-04-01 19:50:39,356 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 19:50:39,358 - werkzeug - INFO -  * Restarting with stat
+2025-04-01 19:50:40,696 - werkzeug - WARNING -  * Debugger is active!
+2025-04-01 19:50:40,700 - werkzeug - INFO -  * Debugger PIN: 581-147-568
+2025-04-01 19:50:52,920 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:50:52] "GET / HTTP/1.1" 200 -
+2025-04-01 19:50:53,217 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:50:53] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:50:55,791 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:50:55] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 19:50:56,122 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:50:56] "GET /admin HTTP/1.1" 200 -
+2025-04-01 19:50:56,476 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:50:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:50:59,423 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:50:59] "GET /admin/class/6/create_duel HTTP/1.1" 200 -
+2025-04-01 19:50:59,726 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:50:59] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:51:02,497 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:02] "[32mPOST /admin/class/6/create_duel HTTP/1.1[0m" 302 -
+2025-04-01 19:51:02,558 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:02] "GET /duel/8 HTTP/1.1" 200 -
+2025-04-01 19:51:02,748 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:02] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:51:04,073 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:04] "GET /duel/8/select_round HTTP/1.1" 200 -
+2025-04-01 19:51:04,131 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:51:04,987 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:04] "[32mPOST /duel/8/select_round HTTP/1.1[0m" 302 -
+2025-04-01 19:51:05,305 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:05] "GET /duel/8/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 19:51:05,670 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:05] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:51:10,978 - root - ERROR - Ошибка в роуте: 'latin-1' codec can't encode characters in position 7-9: ordinal not in range(256)
+2025-04-01 19:51:10,985 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:51:10] "[35m[1mPOST /generate_ai_template HTTP/1.1[0m" 500 -
+2025-04-01 19:52:24,533 - werkzeug - INFO -  * Detected change in 'c:\\Users\\yatma\\Desktop\\Платформа. Версия 4\\app.py', reloading
+2025-04-01 19:52:24,642 - werkzeug - INFO -  * Restarting with stat
+2025-04-01 19:52:25,842 - werkzeug - WARNING -  * Debugger is active!
+2025-04-01 19:52:25,848 - werkzeug - INFO -  * Debugger PIN: 581-147-568
+2025-04-01 19:52:46,293 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.105:5000
+2025-04-01 19:52:46,295 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 19:52:52,482 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:52] "GET / HTTP/1.1" 200 -
+2025-04-01 19:52:52,798 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:52:55,099 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:55] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 19:52:55,444 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:55] "GET /admin HTTP/1.1" 200 -
+2025-04-01 19:52:55,787 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:55] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:52:57,341 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:57] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 19:52:57,648 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:57] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:52:59,098 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:59] "GET /duel/8 HTTP/1.1" 200 -
+2025-04-01 19:52:59,152 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:52:59] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:53:00,254 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:53:00] "GET /duel/8/select_round HTTP/1.1" 200 -
+2025-04-01 19:53:00,563 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:53:00] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:53:01,604 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:53:01] "[32mPOST /duel/8/select_round HTTP/1.1[0m" 302 -
+2025-04-01 19:53:01,629 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:53:01] "GET /duel/8/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 19:53:01,870 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:53:01] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:53:06,451 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:53:06] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 19:58:28,498 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.105:5000
+2025-04-01 19:58:28,499 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 19:58:33,574 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:33] "GET / HTTP/1.1" 200 -
+2025-04-01 19:58:33,856 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:33] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:58:36,335 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:36] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 19:58:36,655 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:36] "GET /admin HTTP/1.1" 200 -
+2025-04-01 19:58:37,003 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:58:37,883 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:37] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 19:58:38,181 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:58:39,773 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:39] "GET /duel/8 HTTP/1.1" 200 -
+2025-04-01 19:58:39,822 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:58:40,674 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:40] "GET /duel/8/select_round HTTP/1.1" 200 -
+2025-04-01 19:58:40,994 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:58:42,294 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:42] "[32mPOST /duel/8/select_round HTTP/1.1[0m" 302 -
+2025-04-01 19:58:42,355 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:42] "GET /duel/8/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 19:58:42,560 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 19:58:49,027 - app - ERROR - Ошибка генерации: name 'A' is not defined
+2025-04-01 19:58:49,042 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 19:58:49] "[35m[1mPOST /generate_ai_template HTTP/1.1[0m" 500 -
+2025-04-01 20:16:17,598 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.105:5000
+2025-04-01 20:16:17,599 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 20:16:25,927 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:25] "GET / HTTP/1.1" 200 -
+2025-04-01 20:16:26,211 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:26] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:16:28,099 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:28] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:16:28,430 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:28] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:16:28,778 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:16:30,462 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:30] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:16:30,773 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:16:32,437 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:32] "GET /duel/8 HTTP/1.1" 200 -
+2025-04-01 20:16:32,490 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:16:33,536 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:33] "GET /duel/8/select_round HTTP/1.1" 200 -
+2025-04-01 20:16:33,847 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:33] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:16:34,971 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:34] "[32mPOST /duel/8/select_round HTTP/1.1[0m" 302 -
+2025-04-01 20:16:35,044 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:35] "GET /duel/8/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 20:16:35,238 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:16:46,281 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:16:46] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:17:00,225 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:00] "POST /duel/8/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 20:17:00,507 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:00] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:05,230 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:05] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:17:05,299 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:05] "GET / HTTP/1.1" 200 -
+2025-04-01 20:17:05,474 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:05] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:08,786 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:08] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:17:09,102 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:09] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:17:09,460 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:09] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:10,924 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:10] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:17:11,240 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:13,130 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:13] "GET /duel/8 HTTP/1.1" 200 -
+2025-04-01 20:17:13,199 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:14,343 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:14] "[32mPOST /duel/8/apply_templates HTTP/1.1[0m" 302 -
+2025-04-01 20:17:14,655 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:14] "GET /duel/8 HTTP/1.1" 200 -
+2025-04-01 20:17:15,009 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:16,750 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:16] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:17:17,063 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:17] "GET / HTTP/1.1" 200 -
+2025-04-01 20:17:17,414 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:17] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:19,132 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:19] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:17:20,947 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:20] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:17:20,991 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:20] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 20:17:21,190 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:30,234 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:30] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:17:30,302 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:30] "GET / HTTP/1.1" 200 -
+2025-04-01 20:17:30,469 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:32,523 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:32] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:17:32,852 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:32] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:17:33,194 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:33] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:34,924 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:34] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:17:35,225 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:40,206 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:40] "[32mPOST /admin/duels/7/delete HTTP/1.1[0m" 302 -
+2025-04-01 20:17:40,235 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:40] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:17:40,450 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:43,337 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:43] "[32mPOST /admin/duels/6/delete HTTP/1.1[0m" 302 -
+2025-04-01 20:17:43,384 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:43] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:17:43,554 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:43] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:44,797 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:44] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:17:44,873 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:44] "GET / HTTP/1.1" 200 -
+2025-04-01 20:17:45,055 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:46,733 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:46] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:17:48,626 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:48] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:17:48,648 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:48] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 20:17:48,994 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:17:49,812 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:49] "GET /student_duel/8 HTTP/1.1" 200 -
+2025-04-01 20:17:50,116 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:17:50] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:18:27,998 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:18:27] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 20:18:28,020 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:18:28] "GET /student_duel/8 HTTP/1.1" 200 -
+2025-04-01 20:18:28,255 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:18:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:19:29,735 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:29] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:19:29,822 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:29] "GET / HTTP/1.1" 200 -
+2025-04-01 20:19:29,992 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:19:32,758 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:32] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:19:33,096 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:33] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:19:33,441 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:33] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:19:34,954 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:34] "GET /admin/class/6/create_duel HTTP/1.1" 200 -
+2025-04-01 20:19:35,255 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:19:38,267 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:38] "[32mPOST /admin/class/6/create_duel HTTP/1.1[0m" 302 -
+2025-04-01 20:19:38,298 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:38] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:19:38,478 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:19:39,760 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:39] "GET /duel/9/select_round HTTP/1.1" 200 -
+2025-04-01 20:19:39,845 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:19:40,822 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:40] "[32mPOST /duel/9/select_round HTTP/1.1[0m" 302 -
+2025-04-01 20:19:41,141 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:41] "GET /duel/9/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 20:19:41,514 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:19:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:20:05,089 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:20:05] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:20:22,914 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:20:22] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:20:55,899 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:20:55] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:21:24,182 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:24] "POST /duel/9/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 20:21:24,234 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:24] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:26,211 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:26] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:21:26,530 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:26] "GET / HTTP/1.1" 200 -
+2025-04-01 20:21:26,881 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:26] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:28,599 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:28] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:21:30,525 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:30] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:21:30,564 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:30] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 20:21:30,779 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:33,955 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:33] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:21:34,049 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:34] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:36,699 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:36] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:21:37,005 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:37] "GET / HTTP/1.1" 200 -
+2025-04-01 20:21:37,342 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:39,214 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:39] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:21:39,535 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:39] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:21:39,890 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:41,343 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:41] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:21:41,658 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:43,210 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:43] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:21:43,335 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:43] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:44,234 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:44] "[32mPOST /duel/9/apply_templates HTTP/1.1[0m" 302 -
+2025-04-01 20:21:44,559 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:44] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:21:44,934 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:44] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:46,317 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:46] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:21:46,640 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:46] "GET / HTTP/1.1" 200 -
+2025-04-01 20:21:46,996 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:46] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:48,720 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:48] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:21:50,471 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:50] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:21:50,506 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:50] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 20:21:50,726 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:50] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:21:51,941 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:51] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:21:52,024 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:21:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:06,731 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:06] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 20:22:07,074 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:07] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:07,425 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:07] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:10,522 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:10] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:22:10,841 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:10] "GET / HTTP/1.1" 200 -
+2025-04-01 20:22:11,184 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:13,009 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:13] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:22:15,114 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:15] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:22:15,141 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:15] "GET /student/2/lessons HTTP/1.1" 200 -
+2025-04-01 20:22:15,375 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:16,529 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:16] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:16,656 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:16] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:20,558 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:20] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 20:22:20,902 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:20] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:21,255 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:22,464 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:22] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:22:22,769 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:22] "GET / HTTP/1.1" 200 -
+2025-04-01 20:22:23,120 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:23] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:25,007 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:25] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:22:29,085 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:29] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:22:29,123 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:29] "GET /student/3/lessons HTTP/1.1" 200 -
+2025-04-01 20:22:29,329 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:30,301 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:30] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:30,431 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:38,428 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:38] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 20:22:38,766 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:38] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:39,121 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:40,436 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:40] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:22:40,741 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:40] "GET / HTTP/1.1" 200 -
+2025-04-01 20:22:41,082 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:43,205 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:43] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:22:45,173 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:45] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:22:45,219 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:45] "GET /student/4/lessons HTTP/1.1" 200 -
+2025-04-01 20:22:45,414 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:47,199 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:47] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:47,255 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:47] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:49,786 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:49] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 20:22:50,121 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:50] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:50,485 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:50] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:51,986 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:51] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:22:52,294 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:52] "GET / HTTP/1.1" 200 -
+2025-04-01 20:22:52,647 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:54,600 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:54] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:22:56,600 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:56] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:22:56,625 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:56] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 20:22:56,867 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:22:58,110 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:58] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:22:58,212 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:22:58] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:23:03,988 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:03] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:23:04,301 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:04] "GET / HTTP/1.1" 200 -
+2025-04-01 20:23:04,646 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:23:07,829 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:07] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:23:08,170 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:08] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:23:08,620 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:08] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:23:09,917 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:09] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:23:10,225 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:10] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:23:12,096 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:12] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:23:12,148 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:12] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:23:15,458 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:15] "[32mPOST /duel/9/generate_round HTTP/1.1[0m" 302 -
+2025-04-01 20:23:15,819 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:15] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:23:16,177 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:16] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:23:22,457 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:22] "GET /duel/9/select_round HTTP/1.1" 200 -
+2025-04-01 20:23:22,764 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:22] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:23:23,748 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:23] "[32mPOST /duel/9/select_round HTTP/1.1[0m" 302 -
+2025-04-01 20:23:23,778 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:23] "GET /duel/9/create_templates/2 HTTP/1.1" 200 -
+2025-04-01 20:23:24,012 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:23:24] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:24:04,011 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:24:04] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:24:22,128 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:24:22] "POST /duel/9/create_templates/2 HTTP/1.1" 200 -
+2025-04-01 20:24:22,427 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:24:22] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:25:06,504 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:25:06] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:25:24,622 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:25:24] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:25:53,257 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:25:53] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 20:26:06,024 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:06] "POST /duel/9/create_templates/2 HTTP/1.1" 200 -
+2025-04-01 20:26:06,321 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:06] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:10,403 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:10] "GET /duel/9/create_templates/2 HTTP/1.1" 200 -
+2025-04-01 20:26:10,529 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:10] "GET /duel/9/select_round HTTP/1.1" 200 -
+2025-04-01 20:26:12,237 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:12] "[32mPOST /duel/9/apply_templates HTTP/1.1[0m" 302 -
+2025-04-01 20:26:12,262 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:12] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:26:12,599 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:12] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:13,884 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:13] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:26:14,184 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:14] "GET / HTTP/1.1" 200 -
+2025-04-01 20:26:14,549 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:14] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:16,595 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:16] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:26:18,240 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:18] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:26:18,274 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:18] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 20:26:18,493 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:18] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:19,816 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:19] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:26:19,942 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:19] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:27,667 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:27] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:26:27,969 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:27] "GET / HTTP/1.1" 200 -
+2025-04-01 20:26:28,308 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:31,975 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:31] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:26:32,289 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:32] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:26:32,667 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:34,147 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:34] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:26:34,457 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:34] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:36,221 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:36] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:26:36,318 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:36] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:40,857 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:40] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:26:41,180 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:41] "GET / HTTP/1.1" 200 -
+2025-04-01 20:26:41,530 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:43,068 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:43] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:26:48,426 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:48] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:26:48,459 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:48] "GET /student/2/lessons HTTP/1.1" 200 -
+2025-04-01 20:26:48,667 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:26:51,394 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:51] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:26:51,498 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:26:51] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:06,786 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:06] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:27:07,100 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:07] "GET / HTTP/1.1" 200 -
+2025-04-01 20:27:07,445 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:07] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:09,131 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:09] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:27:11,591 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:11] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:27:11,623 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:11] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 20:27:11,845 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:13,161 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:13] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:27:13,270 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:22,492 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:22] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 20:27:22,831 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:22] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:27:23,187 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:23] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:24,700 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:24] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:27:25,001 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:25] "GET / HTTP/1.1" 200 -
+2025-04-01 20:27:25,335 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:25] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:27,385 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:27] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:27:29,201 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:29] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:27:29,236 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:29] "GET /student/3/lessons HTTP/1.1" 200 -
+2025-04-01 20:27:29,453 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:30,884 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:30] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:27:30,983 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:34,961 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:34] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 20:27:35,280 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:35] "GET /student_duel/9 HTTP/1.1" 200 -
+2025-04-01 20:27:35,643 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:37,002 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:37] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 20:27:37,322 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:37] "GET / HTTP/1.1" 200 -
+2025-04-01 20:27:37,668 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:39,552 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:39] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 20:27:44,089 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:44] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 20:27:44,123 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:44] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:27:44,342 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:44] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:45,822 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:45] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:27:45,938 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:27:47,381 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:47] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:27:47,713 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:27:47] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:54:18,259 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:18] "[32mPOST /duel/9/finish HTTP/1.1[0m" 302 -
+2025-04-01 20:54:18,292 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:18] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 20:54:18,513 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:18] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:54:30,138 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:30] "GET /admin HTTP/1.1" 200 -
+2025-04-01 20:54:30,185 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:54:31,937 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:31] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:54:32,042 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:54:35,979 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:35] "[32mPOST /admin/duels/9/delete HTTP/1.1[0m" 302 -
+2025-04-01 20:54:36,285 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:36] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 20:54:36,650 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:36] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:54:38,396 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:38] "GET /duel/8 HTTP/1.1" 200 -
+2025-04-01 20:54:38,707 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:54:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:55:28,330 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:55:28] "GET /duel/8/select_round HTTP/1.1" 200 -
+2025-04-01 20:55:28,435 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:55:28] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:55:30,089 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:55:30] "[32mPOST /duel/8/select_round HTTP/1.1[0m" 302 -
+2025-04-01 20:55:30,425 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:55:30] "GET /duel/8/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 20:55:30,778 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:55:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 20:59:40,925 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:59:40] "GET /duel/8/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 20:59:40,988 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:59:40] "GET /static/style.css HTTP/1.1" 200 -
+2025-04-01 20:59:53,752 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.105:5000
+2025-04-01 20:59:53,753 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 20:59:58,552 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:59:58] "GET / HTTP/1.1" 200 -
+2025-04-01 20:59:58,878 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 20:59:58] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:00:01,160 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:01] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 21:00:01,516 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:01] "GET /admin HTTP/1.1" 200 -
+2025-04-01 21:00:01,872 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:01] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:00:03,287 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:03] "GET /admin/class/6/create_duel HTTP/1.1" 200 -
+2025-04-01 21:00:03,601 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:03] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:00:04,986 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:04] "[32mPOST /admin/class/6/create_duel HTTP/1.1[0m" 302 -
+2025-04-01 21:00:05,035 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:05] "GET /duel/9 HTTP/1.1" 200 -
+2025-04-01 21:00:05,239 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:05] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:00:06,537 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:06] "GET /duel/9/select_round HTTP/1.1" 200 -
+2025-04-01 21:00:06,728 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:06] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:00:07,760 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:07] "[32mPOST /duel/9/select_round HTTP/1.1[0m" 302 -
+2025-04-01 21:00:08,108 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:08] "GET /duel/9/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 21:00:08,465 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:08] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:00:56,342 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:00:56] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 21:02:38,075 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:02:38] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 21:34:16,561 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.105:5000
+2025-04-01 21:34:16,562 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 21:34:21,742 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:21] "GET / HTTP/1.1" 200 -
+2025-04-01 21:34:22,027 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:22] "GET /static/style.css HTTP/1.1" 200 -
+2025-04-01 21:34:24,468 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:24] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 21:34:24,781 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:24] "GET /admin HTTP/1.1" 200 -
+2025-04-01 21:34:25,122 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:25] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:34:26,612 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:26] "GET /admin/class/6/create_duel HTTP/1.1" 200 -
+2025-04-01 21:34:26,907 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:26] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:34:29,195 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:29] "[32mPOST /admin/class/6/create_duel HTTP/1.1[0m" 302 -
+2025-04-01 21:34:29,238 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:29] "GET /duel/10 HTTP/1.1" 200 -
+2025-04-01 21:34:29,447 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:34:30,851 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:30] "GET /duel/10/select_round HTTP/1.1" 200 -
+2025-04-01 21:34:30,936 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:30] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:34:31,932 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:31] "[32mPOST /duel/10/select_round HTTP/1.1[0m" 302 -
+2025-04-01 21:34:32,263 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:32] "GET /duel/10/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 21:34:32,618 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:34:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:35:02,468 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:02] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 21:35:02,775 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:02] "GET / HTTP/1.1" 200 -
+2025-04-01 21:35:03,128 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:03] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:35:09,077 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:09] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 21:35:09,394 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:09] "GET /admin HTTP/1.1" 200 -
+2025-04-01 21:35:09,744 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:09] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:35:11,365 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:11] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 21:35:11,661 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:35:13,434 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:13] "GET /duel/10 HTTP/1.1" 200 -
+2025-04-01 21:35:13,529 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:35:14,290 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:14] "GET /duel/10/select_round HTTP/1.1" 200 -
+2025-04-01 21:35:14,623 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:14] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:35:15,699 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:15] "[32mPOST /duel/10/select_round HTTP/1.1[0m" 302 -
+2025-04-01 21:35:15,721 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:15] "GET /duel/10/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 21:35:15,967 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:15] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:35:51,271 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:35:51] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 21:36:16,327 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:16] "POST /generate_ai_template HTTP/1.1" 200 -
+2025-04-01 21:36:29,338 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:29] "POST /duel/10/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 21:36:29,398 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:30,887 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:30] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 21:36:31,195 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:31] "GET / HTTP/1.1" 200 -
+2025-04-01 21:36:31,525 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:31] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:32,980 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:32] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 21:36:34,644 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:34] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 21:36:34,672 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:34] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 21:36:34,891 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:34] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:36,451 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:36] "GET /student_duel/10 HTTP/1.1" 200 -
+2025-04-01 21:36:36,527 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:36] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:38,562 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:38] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 21:36:38,873 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:38] "GET / HTTP/1.1" 200 -
+2025-04-01 21:36:39,215 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:40,913 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:40] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 21:36:41,233 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:41] "GET /admin HTTP/1.1" 200 -
+2025-04-01 21:36:41,580 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:42,996 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:42] "GET /admin/class/6/lessons HTTP/1.1" 200 -
+2025-04-01 21:36:43,304 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:43] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:44,793 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:44] "GET /duel/10 HTTP/1.1" 200 -
+2025-04-01 21:36:45,060 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:46,143 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:46] "[32mPOST /duel/10/apply_templates HTTP/1.1[0m" 302 -
+2025-04-01 21:36:46,461 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:46] "GET /duel/10 HTTP/1.1" 200 -
+2025-04-01 21:36:46,862 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:46] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:48,982 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:48] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 21:36:49,300 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:49] "GET / HTTP/1.1" 200 -
+2025-04-01 21:36:49,639 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:49] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:51,604 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:51] "GET /get_students?class_id=6 HTTP/1.1" 200 -
+2025-04-01 21:36:53,099 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:53] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 21:36:53,133 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:53] "GET /student/1/lessons HTTP/1.1" 200 -
+2025-04-01 21:36:53,349 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:53] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:36:54,477 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:54] "GET /student_duel/10 HTTP/1.1" 200 -
+2025-04-01 21:36:54,564 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:36:54] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:37:30,774 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:30] "[32mPOST /submit_duel_answers HTTP/1.1[0m" 302 -
+2025-04-01 21:37:31,086 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:31] "GET /student_duel/10 HTTP/1.1" 200 -
+2025-04-01 21:37:31,429 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:31] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:37:42,663 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:42] "[32mGET /logout HTTP/1.1[0m" 302 -
+2025-04-01 21:37:42,985 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:42] "GET / HTTP/1.1" 200 -
+2025-04-01 21:37:43,027 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:43] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 21:37:47,974 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:47] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 21:37:48,289 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:48] "GET /admin HTTP/1.1" 200 -
+2025-04-01 21:37:48,644 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 21:37:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 22:22:22,851 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.105:5000
+2025-04-01 22:22:22,853 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 22:22:23,406 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:23] "GET / HTTP/1.1" 200 -
+2025-04-01 22:22:25,214 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:25] "GET /static/style.css HTTP/1.1" 200 -
+2025-04-01 22:22:28,369 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:28] "[32mPOST / HTTP/1.1[0m" 302 -
+2025-04-01 22:22:28,745 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:28] "GET /admin HTTP/1.1" 200 -
+2025-04-01 22:22:29,093 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 22:22:31,427 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:31] "GET /admin/class/6/create_duel HTTP/1.1" 200 -
+2025-04-01 22:22:31,732 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:31] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 22:22:33,356 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:33] "[32mPOST /admin/class/6/create_duel HTTP/1.1[0m" 302 -
+2025-04-01 22:22:33,409 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:33] "GET /duel/11 HTTP/1.1" 200 -
+2025-04-01 22:22:33,609 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:33] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 22:22:34,621 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:34] "GET /duel/11/select_round HTTP/1.1" 200 -
+2025-04-01 22:22:34,737 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:34] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-04-01 22:22:36,409 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:36] "[32mPOST /duel/11/select_round HTTP/1.1[0m" 302 -
+2025-04-01 22:22:36,733 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:36] "GET /duel/11/create_templates/1 HTTP/1.1" 200 -
+2025-04-01 22:22:37,083 - werkzeug - INFO - 127.0.0.1 - - [01/Apr/2025 22:22:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
